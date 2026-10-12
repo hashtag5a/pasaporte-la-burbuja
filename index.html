@@ -19,7 +19,7 @@ button:disabled{opacity:.55}
 </main><div id="toast" role="status"></div><p class="ver" id="ver"></p>
 <script>
 /* ============ Configuración ============ */
-var CFG={url:'https://nebbbnqemzzaogonnuyz.supabase.co',key:'sb_publishable_-HVZwx5A2RfBTJOwCh6xZg_t26k0tTM'},VERSION='2026.10.12-f';
+var CFG={url:'https://nebbbnqemzzaogonnuyz.supabase.co',key:'sb_publishable_-HVZwx5A2RfBTJOwCh6xZg_t26k0tTM'},VERSION='2026.10.12-g';
 var SB_URLS=['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2','https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'];
 var JSQR_URLS=['https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js','https://unpkg.com/jsqr@1.4.0/dist/jsQR.js'];
 var QRGEN_URLS=['https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js','https://unpkg.com/qrcode-generator@1.4.4/qrcode.js'];
@@ -114,12 +114,12 @@ function applyCover(c){var d=designObj((c&&c.design_id)||(SET&&SET.current_desig
 var deferredInstall=null;
 function isStandalone(){try{return (window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true}catch(e){return false}}
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredInstall=e});
-window.addEventListener('appinstalled',function(){deferredInstall=null;updInstall();toast('¡Listo! Ya tienes el pasaporte en tu pantalla de inicio.',5000)});
+window.addEventListener('appinstalled',function(){deferredInstall=null;updInstall();toast('¡Listo! Búscalo en el menú de aplicaciones. Para tenerlo también en la pantalla de inicio, mantén pulsado su icono y elige «Añadir a pantalla de inicio».',12000)});
 function updInstall(){var on=!isStandalone();document.querySelectorAll('.instBtn').forEach(function(b){b.style.display=on?'':'none'});document.querySelectorAll('.instMsg').forEach(function(m){m.style.display='none'})}
 function installApp(){
  if(deferredInstall){var e=deferredInstall;deferredInstall=null;try{e.prompt()}catch(x){}return}
  var ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
- var t=ios?'En iPhone o iPad: abre esta página en Safari, pulsa el botón Compartir (el cuadrado con la flecha hacia arriba) y elige «Añadir a pantalla de inicio».':'Abre el menú del navegador (los tres puntos o las tres rayas) y elige «Añadir a pantalla de inicio» o «Instalar aplicación».';
+ var t=ios?'En iPhone o iPad: abre esta página en Safari, pulsa el botón Compartir (el cuadrado con la flecha hacia arriba) y elige «Añadir a pantalla de inicio».':'Abre el menú del navegador (los tres puntos o las tres rayas) y elige «Instalar aplicación» (queda en tu menú de aplicaciones) o «Añadir a pantalla de inicio». Si solo aparece en el menú de aplicaciones, mantén pulsado su icono y elige «Añadir a pantalla de inicio».';
  document.querySelectorAll('.instMsg').forEach(function(m){m.textContent=t;m.style.display='block'})}
 try{if('serviceWorker' in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}
 
