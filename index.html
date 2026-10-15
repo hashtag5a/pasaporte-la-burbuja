@@ -19,7 +19,7 @@ button:disabled{opacity:.55}
 </main><div id="toast" role="status"></div><p class="ver" id="ver"></p>
 <script>
 /* ============ Configuración ============ */
-var CFG=(window.LB_CONFIG&&window.LB_CONFIG.url&&window.LB_CONFIG.key)?window.LB_CONFIG:{url:'https://nebbbnqemzzaogonnuyz.supabase.co',key:'sb_publishable_-HVZwx5A2RfBTJOwCh6xZg_t26k0tTM'},VERSION='2026.10.15-a';
+var CFG=(window.LB_CONFIG&&window.LB_CONFIG.url&&window.LB_CONFIG.key)?window.LB_CONFIG:{url:'https://nebbbnqemzzaogonnuyz.supabase.co',key:'sb_publishable_-HVZwx5A2RfBTJOwCh6xZg_t26k0tTM'},VERSION='2026.10.15-b';
 var SB_URLS=['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2','https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'];
 var JSQR_URLS=['https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js','https://unpkg.com/jsqr@1.4.0/dist/jsQR.js'];
 var QRGEN_URLS=['https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js','https://unpkg.com/qrcode-generator@1.4.4/qrcode.js'];
@@ -33,7 +33,7 @@ var DEF_COVER=document.querySelector('#cover img').src,DEF_INSIDE=document.getEl
 
 /* ============ Utilidades ============ */
 function $(id){return document.getElementById(id)}
-function pad(n){return String(n).padStart(5,'0')}
+function pad(n){return String(n)}
 function cno(c){return pad(c.number)+(c.completed>0?'-'+c.completed:'')}
 function p2(n){return String(n).padStart(2,'0')}
 function fmt(iso){var d=new Date(iso);return p2(d.getDate())+'/'+p2(d.getMonth()+1)}
