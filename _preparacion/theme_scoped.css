@@ -1,0 +1,73 @@
+
+/* ===== TEMA «BACKSTAGE DORADO» (2026.10.31-a): botones 3D, cartel dorado, personajes de papel recortado ===== */
+:root{--disp:'Oswald','Arial Narrow',Arial,sans-serif}
+body.thNew{background:radial-gradient(120% 55% at 50% 0%,#3a2a0c 0%,#17120a 42%,#0b0a09 72%) fixed,#0b0a09}
+:where(body.thNew) header{padding:12px 12px 14px;background:linear-gradient(180deg,#1d1709,#0b0a09)}
+:where(body.thNew) header .hdT{display:inline-block;white-space:nowrap;font:700 19px/1 var(--disp);letter-spacing:2px;padding:9px 14px 10px;border-radius:10px;border:2px solid #c7a84d;
+ background:linear-gradient(180deg,#fff4c9,#e2c06a 45%,#a8801f);-webkit-background-clip:text;background-clip:text;color:transparent;
+ box-shadow:0 0 0 3px #0b0a09,0 0 0 4px rgba(199,168,77,.55),0 0 18px rgba(246,200,77,.35),inset 0 0 12px rgba(199,168,77,.25)}
+:where(body.thNew) header .hdT::before,:where(body.thNew) header .hdT::after{content:"★";-webkit-text-fill-color:#e2c06a;font-size:13px;vertical-align:2px;margin:0 7px}
+:where(body.thNew) h2{font-family:var(--disp);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+:where(body.thNew) .card{background:linear-gradient(180deg,#fffdf8,#f4ecda);border:1.5px solid #c7a84d;border-radius:20px;
+ box-shadow:0 0 0 4px rgba(199,168,77,.16),0 18px 34px rgba(0,0,0,.6),inset 0 1px 0 #fff}
+:where(body.thNew) input,:where(body.thNew) select,:where(body.thNew) textarea{border:1.5px solid #d9c592;border-radius:12px;background:#fff;box-shadow:inset 0 3px 6px rgba(0,0,0,.08)}
+/* Botones de lingote: canto inferior, brillo arriba y sombra; se hunden al pulsar */
+:where(body.thNew) button{font-family:var(--disp);font-weight:700;letter-spacing:1.2px;text-transform:uppercase;border-radius:14px;color:#2a1d04;
+ text-shadow:0 1px 0 rgba(255,255,255,.55);border:1px solid #8a6a1c;margin:7px 0 12px;
+ background:linear-gradient(180deg,#fff4c9 0%,#ecd07a 22%,#c7a84d 58%,#a8801f 100%);
+ box-shadow:0 5px 0 #7d5f17,0 10px 16px rgba(0,0,0,.45),inset 0 2px 0 rgba(255,255,255,.75),inset 0 -3px 0 rgba(125,95,23,.35);
+ transition:transform .06s,box-shadow .06s}
+:where(body.thNew) button.secondary{color:#3b2c08;text-shadow:none;border:1.5px solid #c7a84d;
+ background:linear-gradient(180deg,#ffffff 0%,#fffdf8 40%,#ebe1c8 100%);
+ box-shadow:0 5px 0 #b39a5a,0 10px 16px rgba(0,0,0,.35),inset 0 2px 0 #fff}
+:where(body.thNew) button.danger{box-shadow:0 5px 0 #5c110c,0 10px 16px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.3)}
+:where(body.thNew) button:not(:disabled):active{transform:translateY(4px);box-shadow:0 1px 0 #7d5f17,0 3px 6px rgba(0,0,0,.4),inset 0 2px 6px rgba(125,95,23,.45)}
+:where(body.thNew) button.secondary:not(:disabled):active{box-shadow:0 1px 0 #b39a5a,0 3px 6px rgba(0,0,0,.3),inset 0 2px 5px rgba(0,0,0,.12)}
+:where(body.thNew) button:disabled{filter:grayscale(.8) brightness(.85);box-shadow:0 3px 0 #6b6458}
+:where(body.thNew) .px,:where(body.thNew) .ccx{box-shadow:0 3px 0 #000,0 6px 12px rgba(0,0,0,.5);text-transform:none;margin:0}
+:where(body.thNew) .gbtn b{font-family:var(--disp);letter-spacing:1px}
+:where(body.thNew) .gbtn small{text-transform:none;letter-spacing:0;font-family:Arial,sans-serif}
+/* Portada y cupón dentro de un marco dorado tipo entrada */
+:where(body.thNew) #cover .art,:where(body.thNew) .board{border-radius:16px;box-shadow:0 0 0 2px #c7a84d,0 0 0 6px #0b0a09,0 0 0 7.5px rgba(199,168,77,.6),0 20px 40px rgba(0,0,0,.7),0 0 30px rgba(246,200,77,.18)}
+:where(body.thNew) #cover .art{margin:8px 0 14px}
+:where(body.thNew) #inside .board{margin:10px 6px 16px}
+/* Barra de progreso dorada */
+:where(body.thNew) .stp{height:14px;border-radius:7px;background:#2a2112;border:1.5px solid #c7a84d;box-shadow:inset 0 2px 4px rgba(0,0,0,.6);overflow:hidden;margin:4px 0 12px}
+:where(body.thNew) .stp i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(180deg,#fff1b8,#e2c06a 45%,#a8801f);box-shadow:0 0 10px #f6e7b0;transition:width .6s ease}
+:where(body.thNew) .qrC svg{background:#fff;border-radius:10px;box-shadow:0 0 0 3px #c7a84d,0 6px 14px rgba(0,0,0,.25)}
+/* Personajes de papel recortado */
+:where(body.thNew) .ppr{filter:drop-shadow(0 3px 0 rgba(0,0,0,.35))}
+:where(body.thNew) .ppr .shk{animation:shk .5s ease-in-out infinite;transform-origin:40px 50px}
+@keyframes shk{0%,100%{transform:rotate(-10deg) translateY(0)}50%{transform:rotate(10deg) translateY(-3px)}}
+:where(body.thNew) .chAv{background:#fffdf8;border-radius:50%;box-shadow:0 0 0 2px #c7a84d}
+:where(body.thNew) .chPrev{background:radial-gradient(70% 60% at 50% 40%,#fffdf8,#e9dcb8)}
+:where(body.thNew) .chPrev svg{width:auto;height:94%;margin-bottom:3%}
+/* Barman Exprés: escena más alta con el camarero detrás de la barra */
+:where(body.thNew) .bmScene{height:420px;background:linear-gradient(180deg,#2a1912 0%,#22140d 58%,#120c08 100%)}
+:where(body.thNew) .bmNeon{font:700 26px/1 var(--disp);letter-spacing:2px;text-transform:uppercase;color:#fff4d1}
+:where(body.thNew) .bmTender{position:absolute;left:50%;top:52px;width:96px;margin-left:-48px;z-index:1;text-align:center}
+:where(body.thNew) .bmTender .cust{width:100%;max-width:none;animation:none}
+:where(body.thNew) .bmTender .bmTag{position:relative;bottom:auto;left:auto;transform:none;display:inline-block;margin-top:-4px}
+:where(body.thNew) .bmShelf{width:40%}
+:where(body.thNew) .bmBoard{width:30%;font-size:13px}
+:where(body.thNew) .bmSlot .cust{width:96%;max-width:132px}
+:where(body.thNew) .bmDrink{background:linear-gradient(180deg,#ffffff,#fffdf8 40%,#ebe1c8);color:#2a1d04;border:1.5px solid #c7a84d;border-radius:14px;
+ box-shadow:0 5px 0 #b39a5a,0 9px 14px rgba(0,0,0,.45),inset 0 2px 0 #fff;font-family:var(--disp)}
+:where(body.thNew) .bmDrink small{font-family:var(--disp);letter-spacing:.8px;text-transform:uppercase;color:#2a1d04}
+:where(body.thNew) .bmDrink.sel{background:linear-gradient(180deg,#fff4c9,#ecd07a 30%,#c7a84d);transform:translateY(3px);box-shadow:0 2px 0 #7d5f17,0 4px 8px rgba(0,0,0,.4)}
+/* Tap the Beat: la banda sobre el escenario */
+:where(body.thNew) .btBand{position:relative;height:172px;max-width:480px;margin:0 auto 6px;border-radius:14px;overflow:hidden;display:flex;align-items:flex-end;justify-content:space-around;padding:0 6px;
+ background:radial-gradient(40% 70% at 20% 0%,rgba(255,220,140,.35),transparent 70%),radial-gradient(40% 70% at 80% 0%,rgba(255,220,140,.35),transparent 70%),linear-gradient(180deg,#1a1320,#2a1d14 78%,#5b3a20 78%,#3b2410 100%);
+ box-shadow:0 0 0 1.5px #c7a84d,0 10px 24px rgba(0,0,0,.6)}
+:where(body.thNew) .btBand .cust{height:130px;width:auto;max-width:31%;animation:bob 1s ease-in-out infinite;margin-bottom:6px}
+:where(body.thNew) .btBand .cust:nth-child(2){animation-delay:.25s}
+:where(body.thNew) .btBand .cust:nth-child(3){animation-delay:.5s}
+:where(body.thNew) .btBand b{z-index:2;position:absolute;top:8px;left:0;right:0;text-align:center;font:700 13px var(--disp);letter-spacing:3px;color:#f6e7b0;text-shadow:0 0 8px rgba(246,200,77,.8)}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){:where(body.thNew) .btBand .cust,:where(body.thNew) .ppr .shk{animation:none}}
+
+.stp{display:none}
+:where(body.thNew) .stp{display:block}
+.thPick{display:flex;gap:8px}
+.thPick button{flex:1}
+.thPick button.on{background:linear-gradient(180deg,#f7e9b4,#c9a94f);border-color:#b38f32}
