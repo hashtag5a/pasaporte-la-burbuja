@@ -1,0 +1,8 @@
+Nueva versión del juego EL BARMAN EXPRÉS. Usa como BASE la imagen que te adjunto: es la escena actual del juego y la quiero mantener. Lo importante:
+- La vista es DESDE DETRÁS DE LA BARRA: el jugador es el barman, así que NO se ve al camarero. En primer plano, el mostrador de madera clara y debajo el botellero/nevera iluminado.
+- A la izquierda, la CABINA DE TELÉFONOS INGLESA roja con la corona dorada y el rótulo TELEPHONE.
+- Arriba, la estructura negra de la barra con las copas colgadas, y los DOS GRIFOS de cerveza (el de la derecha con la chapa AMARILLA).
+- Al fondo, el ESCENARIO azul (con el dibujo de rombos) con la banda tocando y el público delante.
+- Tres clientes al otro lado de la barra, de cara al jugador. En el pecho de cada uno, la chapa redonda con la bebida que pide pegada a su barra de paciencia (verde, amarilla y roja), como en la imagen.
+
+Rediséñala con el mismo estilo que las anteriores: personajes y escenario de papel recortado tipo South Park (cabezas redondas y anchas, ojos ovalados grandes juntos con pupila de punto, colores planos, textura de cartulina), personajes originales. Formato de pantalla de móvil vertical: arriba la escena (unos 60 %), y debajo una bandeja con 5 botones 3D marfil de bebidas (CAÑA, COPA, AGUA, VERMÚ, MOJITO). Arriba del todo: 3 vasos de vida, cronómetro y "320 pts". Colores de la app: negro, oro y marfil.
