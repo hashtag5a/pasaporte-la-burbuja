@@ -139,6 +139,7 @@ input,select{font:500 16px var(--f-txt);padding:12px;border-radius:10px;border:1
 .hist{display:grid;gap:8px}
 .hist .dark{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .small{font-size:12px;color:var(--gris)}
+.slots{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}.slot{aspect-ratio:1;border-radius:50%;border:1.5px dashed #c9b98e;display:grid;place-items:center;font:600 12px var(--f-txt);color:#9c8547}.slot.on{border:0;background:var(--foil);color:var(--tinta);font:700 13px var(--f-disp);box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)}
 .foot{margin-top:28px;font-size:12px;color:var(--gris);text-align:center}
 </style>
 
@@ -224,7 +225,7 @@ function shade(h,p){var n=parseInt(h.slice(1),16),r=n>>16&255,g=n>>8&255,b=n&255
 /* ===== Datos de ejemplo ===== */
 var S={view:'cli',day:true,team:true,screen:'portada',stack:[],joined:{},
   esc:{shape:0,c1:'#c7a84d',c2:'#1d1606',ic:'★',name:'Los Sabelotodo'},
-  inscrito:true};
+  inscrito:true,isCap:true};
 var ICONS=['★','♫','⚡','☠','♛','✦','☕','♣','✪','☾'];
 var COLS=['#c7a84d','#1d1606','#c0392b','#2f6fd6','#3f9b5b','#7b3fa0','#e67e22','#f4f1e6','#16a3a3','#e84393'];
 function av(skin,hair,hairC,beard,glasses,shirt,top,hat,hatC,expr){return{skin:skin,hair:hair,hairC:hairC,beard:beard,glasses:glasses,shirt:shirt,top:top||0,hat:hat||0,hatC:hatC||'#c0392b',expr:expr||0}}
@@ -289,16 +290,18 @@ function qr(){var c='';var seed=7;for(var y=0;y<21;y++)for(var x=0;x<21;x++){see
 var V={};
 V.portada=function(){
   var t=today();
-  return '<div class="pass"><div><div class="t">PASAPORTE<br>LA BURBUJA</div><div class="s">SALA · BAR · TERRAZA</div><div class="num">Pasaporte nº 12 · Javi</div></div></div>'
-   +(S.day?'<button class="btn gold quizBtn" data-go="quiz">QUIZ · HOY '+t.h+'<small>Jornada '+t.j+' de la '+LIGA.nombre+'</small></button>':'')
-   +'<div class="stack" style="margin-top:16px"><button class="btn ivory" data-go="juegos">🎮 JUEGOS</button><button class="btn ghost" data-toast="Aquí sigue el cupón de siempre">MI CUPÓN</button></div>'
-   +'<p class="small" style="margin-top:14px;text-align:center">'+(S.day?'El botón QUIZ solo aparece en la portada el día que hay jornada.':'Hoy no hay quiz: el botón de la portada no aparece. El quiz sigue en JUEGOS.')+'</p>';
+  return '<div class="pass" data-go="reverso" role="button" tabindex="0" aria-label="Abrir el pasaporte" style="cursor:pointer"><div><div class="t">PASAPORTE<br>LA BURBUJA</div><div class="s">SALA · BAR · TERRAZA</div><div class="num">Pasaporte nº 12 · Javi</div><div class="small" style="margin-top:14px">Toca para darle la vuelta</div></div></div>'
+   +(S.day?'<button class="btn gold quizBtn" data-go="quiz">QUIZ · HOY '+t.h+'<small>Jornada '+t.j+' de la '+LIGA.nombre+'</small></button>':'');
 };
-V.juegos=function(){
-  return head('Juegos')+'<div class="gamegrid">'
-   +'<div class="tile star" data-go="quiz" role="button" tabindex="0"><span class="ic">🧠</span>QUIZ<span class="tag">'+(S.day?'Hoy a las '+today().h+' · Liga en marcha':'Próximo: '+fmt(DATES[1]))+'</span></div>'
-   +['🧩 Puzle del cartel','🃏 Memory','🥁 Tap the Beat','🍸 Barman Exprés'].map(function(g){var p=g.split(' ');return '<div class="tile" data-toast="Juego ya existente"><span class="ic">'+p[0]+'</span>'+p.slice(1).join(' ')+'</div>'}).join('')
-   +'</div><p class="small" style="margin-top:14px">El QUIZ está siempre aquí, haya jornada o no.</p>';
+V.reverso=function(){
+  var slots='';for(var i=1;i<=10;i++)slots+='<div class="slot'+(i<=3?' on':'')+'">'+(i<=3?'LB':([3,5,7,10].indexOf(i)>=0?'🎁':i))+'</div>';
+  return head('Mi pasaporte','Lo que ya existe')
+   +'<div class="card"><h3>Mi cupón</h3><div class="slots">'+slots+'</div><p class="muted" style="margin:8px 0 0">Cupón, premios, la cola y conciertos: todo como ahora.</p></div>'
+   +'<h2>Juegos</h2>'
+   +'<div class="eyebrow" style="margin-bottom:8px">Quiz en La Burbuja</div>'
+   +'<div class="gamegrid"><div class="tile star" data-go="quiz" role="button" tabindex="0"><span class="ic">🧠</span>QUIZ<span class="tag">'+(S.day?'Hoy a las '+today().h+' · Liga en marcha':'Próximo: '+fmt(DATES[1]))+'</span></div></div>'
+   +'<div class="eyebrow" style="margin:18px 0 8px">Fuera de concierto</div>'
+   +'<div class="gamegrid">'+['🧩 Puzle del cartel','🃏 Memory','🥁 Tap the Beat','🍸 Barman Exprés'].map(function(g){var p=g.split(' ');return '<div class="tile" data-toast="Juego ya existente"><span class="ic">'+p[0]+'</span>'+p.slice(1).join(' ')+'</div>'}).join('')+'</div>';
 };
 function fmt(d){return d.w.toLowerCase()+' '+d.d+' '+d.m+' · '+d.h}
 V.quiz=function(){
@@ -307,7 +310,7 @@ V.quiz=function(){
     ?'<div class="liveCard"><span class="live">HOY · '+t.h+'</span><div class="round">JORNADA '+t.j+'</div><div class="small">'+t.w+' '+t.d+' '+t.m+' · La Burbuja</div>'
       +'<div class="stack" style="margin-top:14px">'
       +(S.team?'<button class="btn gold" data-go="directo">ENTRAR AL QUIZ<small>'+S.esc.name+' · '+(S.inscrito?'inscritos ✓':'sin inscribir')+'</small></button>'
-               :'<button class="btn gold" data-go="equipo">ÚNETE A UN EQUIPO PARA JUGAR</button>')
+               :'<button class="btn gold" data-go="elegir">ELIGE TU EQUIPO Y ENTRA<small>Un toque y estás dentro</small></button>')
       +'</div></div>'
     :'<div class="dark"><div class="eyebrow">Próxima jornada</div><div style="font:700 24px var(--f-disp);margin-top:6px;color:var(--oro-claro)">'+fmt(DATES[1]).toUpperCase()+'</div><div class="small">Jornada '+DATES[1].j+' · inscríbete abajo</div></div>';
   return h+top
@@ -324,6 +327,13 @@ function dateRow(d,i){
   if(!S.team&&!ins&&!full)chip='<span class="chip c-no">Necesitas equipo</span>';
   return '<div class="date"><div class="cal"><b>'+d.d+'</b><span>'+d.m+'</span></div><div><div class="tt">'+(d.today?'HOY · ':'')+d.w+' '+d.h+'</div><div class="st">Jornada '+d.j+' · '+(d.ins+(ins&&!d.today&&S.joined[key]?1:0))+'/'+d.aforo+' equipos</div></div>'+chip+'</div>';
 }
+V.elegir=function(){
+  var t=today(),caps=['Lucía','Marcos','Sara','Pablo','Noa','Iván','Clara','Rubén'],r=TEAMS.slice(0,t.ins);
+  return head('¿Cuál es tu equipo?','Jornada '+t.j+' · hoy')
+   +'<div class="card">'+r.map(function(tm,i){return '<div class="row"><div class="tm">'+escudo(teamEsc(tm),30)+'<div style="min-width:0"><div style="font-weight:600">'+teamName(tm)+'</div><div class="muted">Capitán: '+caps[i]+' · '+(3+i%3)+' dentro</div></div></div><button class="chip c-no" style="cursor:pointer;background:none;color:#7d5f17;border-color:#7d5f17" data-act="pick" data-i="'+TEAMS.indexOf(tm)+'">Entrar</button></div>'}).join('')+'</div>'
+   +'<div class="stack" style="margin-top:16px"><button class="btn ivory" data-go="escudo">CREAR EQUIPO NUEVO<small>Serás el capitán</small></button></div>'
+   +'<p class="small" style="margin-top:10px">Al entrar quedas inscrito con tu equipo en esta jornada y en la liga. El capitán puede sacar a quien se haya equivocado.</p>';
+};
 V.liga=function(){
   var r=ranked(),me=myPos();
   var pod=[1,0,2].map(function(i){var t=r[i],hgt=[78,58,44][i];return '<div class="pod">'+escudo(teamEsc(t),i===0?50:40,teamName(t))+'<div class="nm">'+teamName(t)+'</div><div class="pt">'+total(t)+' pts</div><div class="blk" style="height:'+hgt+'px">'+(i+1)+'</div></div>'}).join('');
@@ -342,11 +352,11 @@ V.equipo=function(){
    +'<button class="btn ivory" data-act="join">UNIRME</button><p class="small" style="margin-top:10px">También puedes escanear el QR del móvil del capitán con la cámara.</p>';
   return head('Mi equipo',LIGA.nombre)
    +'<div class="card"><div class="team">'+escudo(S.esc,64,S.esc.name)+'<div style="min-width:0"><h3>'+S.esc.name+'</h3><div class="muted">'+MEMBERS.length+' de 6 miembros · '+myPos()+'º en la liga</div></div></div>'
-   +'<div class="members">'+MEMBERS.map(function(m){return '<div class="mem">'+(m.cap?'<span class="cap">CAPITÁN</span>':'')+charSvgNew(m.av)+'<div class="nm">'+m.name+(m.name===ME.name?' (tú)':'')+'</div><div class="rl">'+(m.cap?'Responde en el quiz':'Ve la partida')+'</div></div>'}).join('')
+   +'<div class="members">'+MEMBERS.map(function(m){var cp=S.isCap?m.cap:m.name==='Lucía';return '<div class="mem">'+(cp?'<span class="cap">CAPITÁN</span>':'')+charSvgNew(m.av)+'<div class="nm">'+m.name+(m.name===ME.name?' (tú)':'')+'</div><div class="rl">'+(cp?'Responde en el quiz':'Ve la partida')+'</div></div>'}).join('')
    +'<div class="mem" style="display:grid;place-items:center;border:2px dashed #c9b98e;background:none;color:#7d5f17;font-weight:600;font-size:13px">+1 hueco</div></div></div>'
    +'<h2>Invita a tu gente</h2><div class="codebox">'+qr()+'<div><div class="small">Código del equipo</div><div class="code">SBT-482</div><div class="small">Que lo escaneen o lo escriban en QUIZ → MI EQUIPO</div></div></div>'
    +'<div class="stack" style="margin-top:16px"><button class="btn ivory" data-go="escudo">EDITAR ESCUDO Y NOMBRE</button><button class="btn ivory" data-toast="Abre MI AVATAR, la pantalla que ya existe">🎨 MI AVATAR</button>'
-   +'<button class="btn ghost" data-toast="Solo el capitán: pasa el capitán a otro miembro">CAMBIAR CAPITÁN</button><button class="btn ghost" data-toast="Pediría confirmación antes de salir">SALIR DEL EQUIPO</button></div>';
+   +''+(S.isCap?'<button class="btn ghost" data-toast="Pasa el capitán a otro miembro">CAMBIAR CAPITÁN</button>':'')+'<button class="btn ghost" data-toast="Pediría confirmación antes de salir">SALIR DEL EQUIPO</button></div>';
 };
 V.escudo=function(){
   var e=S.esc;
@@ -364,7 +374,7 @@ V.directo=function(){
   var t=today();
   return head('Jornada '+t.j,'En directo · '+S.esc.name)
    +'<div class="liveCard"><span class="live">EN DIRECTO</span><div class="round">RONDA 2</div><div class="small">Pregunta 7 de 10</div><div class="bar"><i style="width:68%"></i></div>'
-   +'<div class="stack" style="margin-top:14px"><button class="btn gold" data-toast="Abre la app del quiz (falta el enlace del organizador)">ABRIR EL QUIZ<small>Tú eres el capitán: respondes por el equipo</small></button></div></div>'
+   +'<div class="stack" style="margin-top:14px"><button class="btn gold" data-toast="Abre la app del quiz (falta el enlace del organizador)">ABRIR EL QUIZ<small>'+(S.isCap?'Tú eres el capitán: respondes por el equipo':'Responde Lucía (capitana). Tú ves la partida')+'</small></button></div></div>'
    +'<h2>¿Quién ha venido?</h2><div class="dark">'+MEMBERS.map(function(m,i){return '<div class="check">'+charSvgNew(m.av,{crop:1})+'<span class="who">'+m.name+'</span>'+(i<4?'<span class="chip c-ok">Aquí ✓</span>':'<span class="chip c-no">Sin llegar</span>')+'</div>'}).join('')+'</div>'
    +'<p class="small" style="margin-top:10px">Cada miembro marca «Estoy aquí» al escanear el QR de la mesa. Al acabar la jornada suma un sello o '+LIGA.pAsist+' puntos a su pasaporte.</p>'
    +'<div class="stack" style="margin-top:14px"><button class="btn ivory" data-act="here">ESTOY AQUÍ</button></div>';
@@ -427,7 +437,7 @@ function go(s){if(s==='__back'){S.screen=S.stack.pop()||'portada'}else{S.stack.p
 function setSw(id,cb){$(id).addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;[].forEach.call(this.children,function(x){x.classList.toggle('on',x===b)});cb(b.dataset.v);S.stack=[];render();window.scrollTo(0,0)})}
 setSw('swView',function(v){S.view=v;S.screen=v==='own'?'gestion':'portada'});
 setSw('swDay',function(v){S.day=v==='1'});
-setSw('swTeam',function(v){S.team=v==='1';S.screen=S.view==='own'?'gestion':'quiz';S.stack=S.view==='own'?[]:['portada']});
+setSw('swTeam',function(v){S.team=v==='1';S.isCap=true;S.screen=S.view==='own'?'gestion':'quiz';S.stack=S.view==='own'?[]:['portada']});
 document.addEventListener('click',function(e){
   var el=e.target.closest('[data-go],[data-toast],[data-act],[data-esc],[data-ins]');if(!el)return;
   if(el.dataset.go)return go(el.dataset.go);
@@ -436,8 +446,11 @@ document.addEventListener('click',function(e){
   if(el.dataset.esc){var k=el.dataset.esc,v=el.dataset.val;S.esc[k]=k==='shape'?+v:v;var nm=$('tName');if(nm)S.esc.name=nm.value||S.esc.name;render();return}
   var a=el.dataset.act;
   if(a==='rand'){S.esc.shape=Math.floor(Math.random()*4);S.esc.ic=ICONS[Math.floor(Math.random()*ICONS.length)];S.esc.c1=COLS[Math.floor(Math.random()*COLS.length)];do{S.esc.c2=COLS[Math.floor(Math.random()*COLS.length)]}while(S.esc.c2===S.esc.c1);var n=$('tName');if(n)S.esc.name=n.value||S.esc.name;render()}
-  if(a==='saveEsc'){var n2=$('tName');S.esc.name=(n2&&n2.value.trim())||S.esc.name;var was=S.team;S.team=true;$('swTeam').children[0].classList.add('on');$('swTeam').children[1].classList.remove('on');S.stack=['portada','quiz'];S.screen='equipo';render();toast(was?'Escudo guardado':'Equipo creado. Comparte el código.')}
+  if(a==='saveEsc'){var n2=$('tName');S.esc.name=(n2&&n2.value.trim())||S.esc.name;var was=S.team;S.team=true;if(!was)S.isCap=true;$('swTeam').children[0].classList.add('on');$('swTeam').children[1].classList.remove('on');S.stack=['portada','quiz'];S.screen=(!was&&S.day)?'directo':'equipo';render();window.scrollTo(0,0);toast(was?'Escudo guardado':'Equipo creado. Comparte el código.')}
   if(a==='join'){var c=$('joinCode').value.trim();if(!c)return toast('Escribe el código del equipo');S.team=true;$('swTeam').children[0].classList.add('on');$('swTeam').children[1].classList.remove('on');S.screen='equipo';render();toast('Te has unido a '+S.esc.name)}
+  if(a==='pick'){var i=+el.dataset.i,ch=TEAMS[i],old=TEAMS.filter(function(x){return x.me})[0];
+    if(ch!==old){old.me=false;old.esc={shape:S.esc.shape,c1:S.esc.c1,c2:S.esc.c2,ic:S.esc.ic};old.n=S.esc.name;ch.me=true;S.esc={shape:ch.esc.shape,c1:ch.esc.c1,c2:ch.esc.c2,ic:ch.esc.ic,name:ch.n}}
+    S.team=true;S.isCap=false;S.inscrito=true;$('swTeam').children[0].classList.add('on');$('swTeam').children[1].classList.remove('on');S.stack=['portada','quiz'];S.screen='directo';render();window.scrollTo(0,0);return toast('Dentro de '+S.esc.name+'. Inscrito en la jornada.')}
   if(a==='here')toast('Asistencia marcada. Sello al terminar la jornada.');
   if(a==='addDate'){var d=$('nd').value,h=$('nh').value,ar=+$('na').value||12;if(!d)return toast('Elige una fecha');var p=d.split('-'),ms=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
     DATES.push({d:+p[2],m:ms[+p[1]-1],w:'Jueves',h:h,j:DATES[DATES.length-1].j+1,aforo:ar,ins:0});render();toast('Jornada añadida')}
