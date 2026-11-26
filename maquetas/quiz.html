@@ -1,0 +1,450 @@
+<title>Quiz La Burbuja</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Maqueta móvil de una sola columna: barra de demo arriba, pantallas del pasaporte debajo. Estilo único noche/oro del pasaporte. */
+:root{
+  --noche:#0b0a09; --noche2:#16130f; --oro:#c7a84d; --oro-claro:#f6e7b0; --oro-sombra:#7d5f17;
+  --marfil:#fffdf8; --tinta:#1d1606; --gris:#a59a83; --linea:#3a3122; --rojo:#c0392b; --verde:#3f9b5b;
+  --f-disp:'Oswald','Arial Narrow',Impact,sans-serif; --f-txt:'Inter',system-ui,-apple-system,sans-serif;
+  --foil:linear-gradient(160deg,#7d5f17 0%,#c7a84d 18%,#f6e7b0 38%,#d9bd68 52%,#b38f32 70%,#e9d18a 86%,#8a6a1f 100%);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--noche);color:var(--oro-claro);font-family:var(--f-txt);font-size:15px;line-height:1.45;
+  background-image:radial-gradient(120% 50% at 50% -5%,rgba(199,168,77,.28),transparent 60%);background-attachment:fixed;min-height:100%}
+.wrap{max-width:440px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+/* barra de demo */
+.demo{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:#1a1610;border-bottom:1px solid var(--linea);
+  padding-block:8px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:21;background:#1a1610}
+.demo .in{max-width:440px;margin:0 auto;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.demo b{font:600 10px/1 var(--f-txt);letter-spacing:.12em;color:var(--gris);text-transform:uppercase;margin-right:2px}
+.sw{display:inline-flex;border:1px solid var(--linea);border-radius:999px;overflow:hidden}
+.sw button{background:none;border:0;color:var(--gris);font:600 11px var(--f-txt);padding:6px 10px;cursor:pointer}
+.sw button.on{background:var(--oro);color:var(--tinta)}
+.note{font-size:11px;color:var(--gris);width:100%;margin-top:2px}
+/* cabecera */
+.head{display:flex;align-items:center;gap:10px;padding-block:16px 10px}
+.back{width:38px;height:38px;border-radius:50%;border:1px solid var(--oro);background:none;color:var(--oro);font-size:18px;cursor:pointer;flex:none}
+.head h1{font:700 26px/1 var(--f-disp);letter-spacing:.04em;text-transform:uppercase;margin:0;
+  background:var(--foil);-webkit-background-clip:text;background-clip:text;color:transparent;text-wrap:balance}
+.eyebrow{font:600 11px/1 var(--f-txt);letter-spacing:.16em;text-transform:uppercase;color:var(--oro)}
+h2{font:600 17px/1.2 var(--f-disp);letter-spacing:.06em;text-transform:uppercase;color:var(--oro);margin:22px 0 10px}
+/* botones */
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:15px 16px;font:700 17px/1 var(--f-disp);letter-spacing:.07em;text-transform:uppercase;
+  cursor:pointer;position:relative;transition:transform .08s,box-shadow .08s;text-align:center}
+.gold{background:var(--foil);color:var(--tinta);box-shadow:inset 0 2px 0 rgba(255,255,255,.55),0 6px 0 var(--oro-sombra),0 10px 18px rgba(0,0,0,.55)}
+.gold:active{transform:translateY(5px);box-shadow:inset 0 2px 0 rgba(255,255,255,.4),0 1px 0 var(--oro-sombra),0 3px 6px rgba(0,0,0,.5)}
+.ivory{background:var(--marfil);color:var(--tinta);box-shadow:inset 0 -2px 0 #e7dcc0,0 5px 0 #9c8547,0 8px 14px rgba(0,0,0,.5);border:1px solid var(--oro)}
+.ivory:active{transform:translateY(4px);box-shadow:0 1px 0 #9c8547}
+.ghost{background:transparent;color:var(--oro-claro);border:1.5px solid var(--oro);font-size:15px;padding:12px}
+.btn[disabled]{filter:grayscale(.8) brightness(.6);cursor:not-allowed;transform:none}
+.btn small{display:block;font:500 12px/1.3 var(--f-txt);letter-spacing:0;text-transform:none;margin-top:5px;opacity:.85}
+.stack{display:grid;gap:14px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--oro-claro);outline-offset:3px}
+/* tarjetas marfil */
+.card{background:var(--marfil);color:var(--tinta);border-radius:16px;padding:16px;border:2px solid var(--oro);box-shadow:0 10px 24px rgba(0,0,0,.55)}
+.card h3{font:700 18px/1.1 var(--f-disp);text-transform:uppercase;letter-spacing:.04em;margin:0 0 6px}
+.muted{color:#6d6250;font-size:13px}
+.dark{background:var(--noche2);border:1px solid var(--linea);border-radius:14px;padding:14px}
+/* portada */
+.pass{aspect-ratio:3/4;max-width:100%;border-radius:18px;border:3px solid var(--oro);background:
+  radial-gradient(70% 45% at 50% 30%,rgba(246,231,176,.22),transparent 70%),linear-gradient(170deg,#2a1d0d,#0b0a09 70%);
+  display:grid;place-items:center;text-align:center;padding:24px;box-shadow:0 14px 34px rgba(0,0,0,.6);margin-top:14px}
+.pass .t{font:700 44px/0.95 var(--f-disp);letter-spacing:.05em;background:var(--foil);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pass .s{font:600 12px var(--f-txt);letter-spacing:.3em;color:var(--oro);margin-top:10px}
+.pass .num{margin-top:22px;border:1px dashed var(--oro);border-radius:10px;padding:8px 14px;font:600 13px var(--f-txt);color:var(--oro-claro)}
+.quizBtn{margin-top:18px;animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{50%{filter:brightness(1.12);box-shadow:inset 0 2px 0 rgba(255,255,255,.55),0 6px 0 var(--oro-sombra),0 0 26px rgba(246,231,176,.55)}}
+@media (prefers-reduced-motion:reduce){.quizBtn{animation:none}}
+.live{display:inline-flex;align-items:center;gap:6px;font:700 11px var(--f-txt);letter-spacing:.12em;color:#fff;background:var(--rojo);border-radius:999px;padding:4px 9px}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff}
+/* juegos */
+.gamegrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{background:var(--marfil);color:var(--tinta);border:2px solid var(--oro);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;
+  box-shadow:0 5px 0 #9c8547;font:700 15px var(--f-disp);text-transform:uppercase;letter-spacing:.04em;display:grid;gap:6px;justify-items:center}
+.tile .ic{font-size:26px;line-height:1}
+.tile.star{grid-column:1/-1;background:var(--foil);box-shadow:0 6px 0 var(--oro-sombra);font-size:20px}
+.tile .tag{font:600 11px var(--f-txt);text-transform:none;letter-spacing:0}
+/* fechas */
+.dates{display:grid;gap:8px}
+.date{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;background:var(--noche2);border:1px solid var(--linea);border-radius:12px;padding:10px}
+.cal{background:var(--marfil);color:var(--tinta);border-radius:8px;text-align:center;padding:4px 0;border-top:6px solid var(--rojo)}
+.cal b{display:block;font:700 22px/1 var(--f-disp)}
+.cal span{font:600 10px var(--f-txt);letter-spacing:.08em;text-transform:uppercase}
+.date .tt{font-weight:600;color:var(--oro-claro)}
+.date .st{font-size:12px;color:var(--gris)}
+.chip{font:600 11px var(--f-txt);border-radius:999px;padding:4px 9px;white-space:nowrap}
+.c-ok{background:rgba(63,155,91,.18);color:#8fd6a6;border:1px solid #3f9b5b}
+.c-no{background:transparent;color:var(--oro);border:1px solid var(--oro)}
+.c-full{background:rgba(192,57,43,.2);color:#f0a59b;border:1px solid var(--rojo)}
+/* liga */
+.tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.tbl th{font:600 10px var(--f-txt);letter-spacing:.1em;text-transform:uppercase;color:#6d6250;text-align:left;padding:4px 4px 8px}
+.tbl td{padding:8px 4px;border-top:1px solid #eadfc4;vertical-align:middle}
+.tbl td.n{text-align:right;font-weight:700}
+.tbl tr.me td{background:#1d1606;color:var(--oro-claro)}
+.tbl tr.me td:first-child{border-radius:8px 0 0 8px}.tbl tr.me td:last-child{border-radius:0 8px 8px 0}
+.pos{font:700 18px var(--f-disp);width:26px;text-align:center}
+.tm{display:flex;align-items:center;gap:8px;min-width:0}
+.tm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.trend{font-size:11px}
+.podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;align-items:end;gap:8px;margin:6px 0 16px}
+.pod{text-align:center;display:grid;justify-items:center;gap:4px}
+.pod .blk{width:100%;border-radius:10px 10px 0 0;background:var(--foil);color:var(--tinta);font:700 22px var(--f-disp);display:grid;place-items:center}
+.pod .nm{font:600 12px var(--f-txt);color:var(--oro-claro);line-height:1.2}
+.pod .pt{font:600 11px var(--f-txt);color:var(--gris)}
+/* equipo */
+.team{display:flex;gap:14px;align-items:center}
+.members{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.mem{text-align:center;background:#f6efdc;border-radius:12px;padding:6px 4px 8px;position:relative}
+.mem svg.cust{width:70px;height:auto;margin:0 auto;display:block}
+.mem .nm{font:600 12px var(--f-txt)}
+.mem .rl{font-size:10px;color:#6d6250}
+.cap{position:absolute;top:4px;right:4px;background:var(--tinta);color:var(--oro-claro);font:700 9px var(--f-txt);border-radius:999px;padding:2px 6px}
+.codebox{display:flex;gap:12px;align-items:center;background:var(--noche2);border:1px dashed var(--oro);border-radius:12px;padding:12px;margin-top:12px;color:var(--oro-claro)}
+.code{font:700 26px var(--f-disp);letter-spacing:.2em}
+.qr{width:74px;height:74px;flex:none;background:#fff;border-radius:6px;padding:4px}
+.field{display:grid;gap:6px;margin-bottom:12px}
+.field label{font:600 12px var(--f-txt);letter-spacing:.06em;text-transform:uppercase;color:var(--oro)}
+.card .field label{color:#7d5f17}
+input,select{font:500 16px var(--f-txt);padding:12px;border-radius:10px;border:1.5px solid var(--oro);background:#fff;color:var(--tinta);width:100%}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{width:42px;height:42px;border-radius:10px;border:2px solid #d9cba3;background:#fff;cursor:pointer;display:grid;place-items:center;font-size:20px;color:var(--tinta)}
+.opt.on{border-color:var(--tinta);box-shadow:0 0 0 2px var(--oro)}
+.swatch{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px #c9b98e;cursor:pointer}
+.swatch.on{box-shadow:0 0 0 3px var(--tinta)}
+.preview{display:grid;place-items:center;padding:8px 0 4px}
+/* directo */
+.liveCard{background:linear-gradient(180deg,#22190b,#0f0c08);border:2px solid var(--oro);border-radius:18px;padding:18px;text-align:center}
+.round{font:700 40px/1 var(--f-disp);color:var(--oro-claro);margin:10px 0 2px}
+.bar{height:10px;border-radius:99px;background:#2b2418;overflow:hidden;margin:12px 0 4px}
+.bar i{display:block;height:100%;background:var(--foil);border-radius:99px}
+.check{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--linea)}
+.check svg.cust{width:42px;height:auto}
+.check .who{flex:1;font-weight:600}
+/* gestión */
+.ownerHead{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--marfil);color:var(--tinta);border-radius:12px;padding:10px;text-align:center;border:1.5px solid var(--oro)}
+.stat b{display:block;font:700 26px/1 var(--f-disp);font-variant-numeric:tabular-nums}
+.stat span{font-size:11px;color:#6d6250}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid #eadfc4}
+.row:first-of-type{border-top:0}
+.ptsIn{width:78px;text-align:center;padding:8px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--marfil);color:var(--tinta);
+  border:2px solid var(--oro);border-radius:12px;padding:10px 16px;font-weight:600;box-shadow:0 10px 24px rgba(0,0,0,.6);z-index:30;max-width:calc(100% - 32px)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hist{display:grid;gap:8px}
+.hist .dark{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.small{font-size:12px;color:var(--gris)}
+.foot{margin-top:28px;font-size:12px;color:var(--gris);text-align:center}
+</style>
+
+<div class="demo"><div class="in">
+  <b>Maqueta</b>
+  <span class="sw" id="swView"><button data-v="cli" class="on">Cliente</button><button data-v="own">Felipe (gestión)</button></span>
+  <span class="sw" id="swDay"><button data-v="1" class="on">Hoy hay quiz</button><button data-v="0">Sin quiz</button></span>
+  <span class="sw" id="swTeam"><button data-v="1" class="on">Con equipo</button><button data-v="0">Sin equipo</button></span>
+  <div class="note">Datos de ejemplo. Nada se guarda.</div>
+</div></div>
+
+<main class="wrap" id="app"></main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ===== Muñecos de papel recortado: mismo código que MI AVATAR del pasaporte ===== */
+function chDefault(){return{skin:'#e0ac69',hair:1,hairC:'#2b1d14',beard:0,glasses:0,hat:0,hatC:'#c0392b',shirt:'#2f6fd6',top:0,expr:0}}
+function chColor(c,def){return /^#[0-9a-fA-F]{6}$/.test(c||'')?c:def}
+function chShade(h,p){return shade(chColor(h,'#888888'),p)}
+function charSvgNew(sp,o){sp=sp||{};o=o||{};var d=chDefault();var S=chColor(sp.skin,d.skin),HC=chColor(sp.hairC,d.hairC),SH=chColor(sp.shirt,d.shirt),HT=chColor(sp.hatC,d.hatC),hv=+sp.hair||0,bd=+sp.beard||0,gl=+sp.glasses||0,ht=+sp.hat||0,tp=+sp.top||0,ex=+sp.expr||0;
+ var K='#1b1410',sw=' stroke="'+K+'" stroke-width="1.4" stroke-linejoin="round"',SD=chShade(SH,-.28),PA='#2e3f63',ARM=tp===4?S:SH;
+ var h='<svg viewBox="'+(o.crop?'6 0 68 66':'0 0 80 112')+'" class="cust ppr'+(o.cls?' '+o.cls:'')+'" aria-hidden="true">';
+ /* pelo de detrás */
+ if(hv===2)h+='<path d="M14 34 Q10 8 40 7 Q70 8 66 34 L70 76 Q40 84 10 76Z" fill="'+HC+'"'+sw+'/>';
+ if(hv===7)h+='<path d="M14 34 Q11 8 40 7 Q69 8 66 34 L68 56 Q40 62 12 56Z" fill="'+HC+'"'+sw+'/>';
+ if(hv===3)h+='<path d="M62 22 Q80 26 74 58 Q70 44 60 36Z" fill="'+HC+'"'+sw+'/>';
+ /* piernas y pies */
+ if(!o.noLegs)h+='<rect x="25" y="97" width="30" height="9" rx="2" fill="'+PA+'"'+sw+'/><ellipse cx="31" cy="107.5" rx="9" ry="4" fill="'+K+'"/><ellipse cx="49" cy="107.5" rx="9" ry="4" fill="'+K+'"/>';
+ /* cuerpo */
+ var body='M17 100 Q15 68 40 61 Q65 68 63 100Z';
+ h+='<path d="'+body+'" fill="'+SH+'"'+sw+'/>';
+ if(tp===1)h+='<path d="M32 62 L40 72 L48 62Z" fill="#f4f1e6"'+sw+'/><path d="M40 72 L40 99" stroke="'+K+'" stroke-width="1.1"/><circle cx="40" cy="80" r="1.3" fill="'+K+'"/><circle cx="40" cy="89" r="1.3" fill="'+K+'"/>';
+ else if(tp===2)h+='<path d="M27 66 Q40 76 53 66" fill="none" stroke="'+SD+'" stroke-width="3"/><path d="M36 70 L35 80 M44 70 L45 80" stroke="#f4f1e6" stroke-width="1.4"/><path d="M28 92 Q40 96 52 92" fill="none" stroke="'+SD+'" stroke-width="2"/>';
+ else if(tp===3){h+='<path d="M30 63 Q40 74 50 63" fill="none" stroke="'+SD+'" stroke-width="5"/><path d="M30 63 Q40 74 50 63" fill="none" stroke="'+chShade(SH,.2)+'" stroke-width="1.5" stroke-dasharray="1.6 1.6"/><path d="M17.3 95 L62.7 95" stroke="'+SD+'" stroke-width="4"/><path d="M17.3 95 L62.7 95" stroke="'+chShade(SH,.2)+'" stroke-width="4" stroke-dasharray="1.4 2.2"/>';[31,40,49].forEach(function(x){h+='<path d="M'+x+' 74 l-2.5 3.5 2.5 3.5 -2.5 3.5 2.5 3.5" fill="none" stroke="'+SD+'" stroke-width="1.3"/>'})}
+ else if(tp===4)h+='<path d="M17 100 Q15 70 29 63.5 L31.5 70 Q22 78 22.5 100Z" fill="'+S+'"'+sw+'/><path d="M63 100 Q65 70 51 63.5 L48.5 70 Q58 78 57.5 100Z" fill="'+S+'"'+sw+'/><path d="M33 62.5 Q40 75 47 62.5Z" fill="'+S+'"'+sw+'/>';
+ else h+='<path d="M33 62 Q40 68 47 62" fill="none" stroke="'+SD+'" stroke-width="2.4"/>';
+ if(o.apron)h+='<path d="M28 70 L52 70 L55 100 L25 100Z" fill="#c7a84d"'+sw+'/><path d="M30 70 L36 63 M50 70 L44 63" stroke="#7d5f17" stroke-width="2"/><circle cx="40" cy="84" r="5" fill="#1d1606"/><text x="40" y="86" text-anchor="middle" font-size="4.4" font-weight="700" fill="#f6e7b0" font-family="Arial">LB</text>';
+ /* brazos y manos (mitones) */
+ if(o.shaker){h+='<path d="M20 74 Q24 66 33 60" stroke="'+ARM+'" stroke-width="8" stroke-linecap="round" fill="none"/><path d="M60 74 Q57 66 47 60" stroke="'+ARM+'" stroke-width="8" stroke-linecap="round" fill="none"/>'+
+  '<g class="shk"><rect x="34" y="38" width="12" height="22" rx="4" fill="#d5dae1"'+sw+'/><rect x="36" y="33" width="8" height="6" rx="2" fill="#a7afba"'+sw+'/><path d="M36 44 L44 44" stroke="#fff" stroke-width="1.4" opacity=".8"/></g>'+
+  '<circle cx="34" cy="58" r="5" fill="'+S+'"'+sw+'/><circle cx="46" cy="58" r="5" fill="'+S+'"'+sw+'/>'}
+ else if(o.inst==='mic')h+='<path d="M19 76 L15 92" stroke="'+ARM+'" stroke-width="8" stroke-linecap="round"/><circle cx="15" cy="94" r="5" fill="'+S+'"'+sw+'/><path d="M61 76 Q62 66 54 58" stroke="'+ARM+'" stroke-width="8" stroke-linecap="round" fill="none"/><path d="M50 56 L58 112" stroke="#2b2b2b" stroke-width="2.2"/><ellipse cx="49" cy="53" rx="4" ry="5" fill="#555"'+sw+'/><circle cx="54" cy="58" r="5" fill="'+S+'"'+sw+'/>';
+ else if(o.inst==='guitar')h+='<g transform="rotate(-24 40 84)"><rect x="40" y="81" width="34" height="5" fill="#6b4a2a"'+sw+'/><rect x="72" y="79.5" width="6" height="8" rx="1" fill="#3a2a1a"/><path d="M20 76 Q30 72 40 78 Q46 82 40 88 Q30 96 20 92 Q12 84 20 76Z" fill="#c0392b"'+sw+'/><circle cx="31" cy="83" r="3" fill="'+K+'"/></g><circle cx="25" cy="88" r="5" fill="'+S+'"'+sw+'/><circle cx="58" cy="74" r="5" fill="'+S+'"'+sw+'/>';
+ else if(o.inst==='drums')h+='<path d="M20 74 L10 62" stroke="'+ARM+'" stroke-width="8" stroke-linecap="round"/><path d="M60 74 L70 62" stroke="'+ARM+'" stroke-width="8" stroke-linecap="round"/><circle cx="10" cy="60" r="5" fill="'+S+'"'+sw+'/><circle cx="70" cy="60" r="5" fill="'+S+'"'+sw+'/><path d="M10 60 L2 46 M70 60 L78 46" stroke="#d9b98a" stroke-width="2.4" stroke-linecap="round"/>';
+ else if(o.wave)h+='<path d="M19 76 L15 92" stroke="'+ARM+'" stroke-width="8" stroke-linecap="round"/><circle cx="15" cy="94" r="5" fill="'+S+'"'+sw+'/><path d="M61 74 L72 56" stroke="'+ARM+'" stroke-width="8" stroke-linecap="round"/><circle cx="73" cy="53" r="5" fill="'+S+'"'+sw+'/>';
+ else h+='<path d="M19 76 L15 92" stroke="'+ARM+'" stroke-width="8" stroke-linecap="round"/><path d="M61 76 L65 92" stroke="'+ARM+'" stroke-width="8" stroke-linecap="round"/><circle cx="15" cy="94" r="5" fill="'+S+'"'+sw+'/><circle cx="65" cy="94" r="5" fill="'+S+'"'+sw+'/>';
+ /* cabeza */
+ h+='<ellipse cx="40" cy="35" rx="27" ry="24" fill="'+S+'"'+sw+'/>';
+ /* barba (debajo de la boca) */
+ if(bd===1)h+='<path d="M15 38 Q17 58 40 59 Q63 58 65 38 Q60 50 40 51 Q20 50 15 38Z" fill="'+HC+'" opacity=".35"/>';
+ if(bd===2)h+='<path d="M14.5 36 Q15 59 40 59.5 Q65 59 65.5 36 Q62 46 54 46 Q48 42 40 43 Q32 42 26 46 Q18 46 14.5 36Z" fill="'+HC+'"'+sw+'/>';
+ /* ojos grandes y juntos */
+ var ty=ex===1?33:32;
+ h+='<ellipse cx="32" cy="'+ty+'" rx="8.6" ry="'+(ex===1?7.6:9.6)+'" fill="#fff"'+sw+' transform="rotate(-8 32 '+ty+')"/><ellipse cx="48" cy="'+ty+'" rx="8.6" ry="'+(ex===1?7.6:9.6)+'" fill="#fff"'+sw+' transform="rotate(8 48 '+ty+')"/>';
+ h+='<circle cx="34.6" cy="'+(ty+1)+'" r="1.9" fill="'+K+'"/><circle cx="45.4" cy="'+(ty+1)+'" r="1.9" fill="'+K+'"/>';
+ if(ex===1)h+='<path d="M24 24.5 L37 27 M56 24.5 L43 27" stroke="'+K+'" stroke-width="1.6" stroke-linecap="round"/>';
+ /* boca */
+ var my=bd===2?49.5:48;
+ if(ex===2)h+='<path d="M34 '+(my-1)+' Q40 '+(my+9)+' 46 '+(my-1)+'Z" fill="#5a1414"'+sw+'/><path d="M35.6 '+(my-.4)+' L44.4 '+(my-.4)+'" stroke="#fff" stroke-width="1.3"/>';
+ else if(ex===1)h+='<path d="M36 '+(my+.5)+' L44 '+(my+.5)+'" stroke="'+K+'" stroke-width="1.6" stroke-linecap="round"/>';
+ else h+='<path d="M35 '+my+' Q40 '+(my+4.5)+' 45 '+my+'" fill="none" stroke="'+K+'" stroke-width="1.6" stroke-linecap="round"/>';
+ if(bd===3)h+='<path d="M31 '+(my-3)+' Q36 '+(my-6.5)+' 40 '+(my-4)+' Q44 '+(my-6.5)+' 49 '+(my-3)+' Q44 '+(my-1.5)+' 40 '+(my-2.5)+' Q36 '+(my-1.5)+' 31 '+(my-3)+'Z" fill="'+HC+'"'+sw+'/>';
+ if(bd===4)h+='<path d="M35.5 54 Q40 63 44.5 54 Q40 56 35.5 54Z" fill="'+HC+'"'+sw+'/>';
+ /* pelo de delante */
+ if(hv===1||hv===3||hv===5)h+='<path d="M13.5 31 Q13 9 40 9 Q67 9 66.5 31 Q60 18 50 18 Q46 22 40 19 Q30 21 22 19 Q16 22 13.5 31Z" fill="'+HC+'"'+sw+'/>';
+ if(hv===2||hv===7)h+='<path d="M13.5 36 Q11 9 40 9 Q69 9 66.5 36 Q63 21 50 19 Q40 25 28 20 Q17 23 13.5 36Z" fill="'+HC+'"'+sw+'/>';
+ if(hv===4){[[16,27],[20,17],[28,11],[37,8],[46,8],[54,11],[61,17],[65,27],[24,21],[33,15],[47,15],[57,21]].forEach(function(p){h+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="7" fill="'+HC+'"'+sw+'/>'});h+='<path d="M14 30 Q40 14 66 30 Q60 20 40 17 Q20 20 14 30Z" fill="'+HC+'"/>'}
+ if(hv===5)h+='<circle cx="40" cy="6.5" r="7" fill="'+HC+'"'+sw+'/>';
+ if(hv===6)h+='<path d="M31 16 L33 0 L37 11 L40 -1 L43 11 L47 0 L49 16 Q40 12 31 16Z" fill="'+HC+'"'+sw+'/>';
+ if(hv===0&&!ht)h+='<path d="M28 15 Q34 12 39 13" stroke="#fff" stroke-width="2" opacity=".35" fill="none" stroke-linecap="round"/>';
+ /* gafas */
+ if(gl===1)h+='<g fill="none" stroke="'+K+'" stroke-width="2.2"><circle cx="32" cy="'+ty+'" r="10.2"/><circle cx="48" cy="'+ty+'" r="10.2"/></g>';
+ if(gl===2)h+='<g fill="none" stroke="'+K+'" stroke-width="2.8"><rect x="21" y="'+(ty-9)+'" width="19" height="17" rx="3.5"/><rect x="40" y="'+(ty-9)+'" width="19" height="17" rx="3.5"/></g><path d="M21 '+(ty-4)+' L14 '+(ty-6)+' M59 '+(ty-4)+' L66 '+(ty-6)+'" stroke="'+K+'" stroke-width="2.4"/>';
+ if(gl===3)h+='<g fill="#111" stroke="'+K+'" stroke-width="1.4"><rect x="21" y="'+(ty-8)+'" width="19" height="14" rx="5"/><rect x="40" y="'+(ty-8)+'" width="19" height="14" rx="5"/></g><path d="M24 '+(ty-4)+' L30 '+(ty-4)+' M43 '+(ty-4)+' L49 '+(ty-4)+'" stroke="rgba(255,255,255,.5)" stroke-width="1.4"/>';
+ /* gorra / gorro / sombrero */
+ if(ht===1)h+='<path d="M13 26 Q13 6 40 6 Q67 6 67 26Z" fill="'+HT+'"'+sw+'/><path d="M40 22 L74 23 Q77 27 72 28 L40 27Z" fill="'+chShade(HT,-.25)+'"'+sw+'/><circle cx="40" cy="7" r="2" fill="'+chShade(HT,-.3)+'"/>';
+ if(ht===2)h+='<path d="M13.5 25 Q13 2 40 2 Q67 2 66.5 25Z" fill="'+HT+'"'+sw+'/><rect x="11.5" y="20" width="57" height="9" rx="4.5" fill="'+chShade(HT,-.22)+'"'+sw+'/><circle cx="40" cy="1.5" r="5" fill="'+chShade(HT,.3)+'"'+sw+'/>';
+ if(ht===3)h+='<ellipse cx="40" cy="20" rx="33" ry="5.5" fill="'+chShade(HT,-.2)+'"'+sw+'/><path d="M24 19 Q23 0 40 0 Q57 0 56 19Z" fill="'+HT+'"'+sw+'/><rect x="24" y="13" width="32" height="4" fill="'+chShade(HT,-.45)+'"/>';
+ if(o.ring)h+='<circle class="pat" cx="40" cy="35" r="21" transform="translate(40 35) scale(1.42) translate(-40 -35) rotate(-90 40 35)"/>';
+ return h+'</svg>'}
+function shade(h,p){var n=parseInt(h.slice(1),16),r=n>>16&255,g=n>>8&255,b=n&255;function f(c){return Math.round(p<0?c*(1+p):c+(255-c)*p)}return 'rgb('+f(r)+','+f(g)+','+f(b)+')'}
+
+/* ===== Datos de ejemplo ===== */
+var S={view:'cli',day:true,team:true,screen:'portada',stack:[],joined:{},
+  esc:{shape:0,c1:'#c7a84d',c2:'#1d1606',ic:'★',name:'Los Sabelotodo'},
+  inscrito:true};
+var ICONS=['★','♫','⚡','☠','♛','✦','☕','♣','✪','☾'];
+var COLS=['#c7a84d','#1d1606','#c0392b','#2f6fd6','#3f9b5b','#7b3fa0','#e67e22','#f4f1e6','#16a3a3','#e84393'];
+function av(skin,hair,hairC,beard,glasses,shirt,top,hat,hatC,expr){return{skin:skin,hair:hair,hairC:hairC,beard:beard,glasses:glasses,shirt:shirt,top:top||0,hat:hat||0,hatC:hatC||'#c0392b',expr:expr||0}}
+var ME={name:'Javi',av:av('#e0ac69',1,'#2b1d14',1,1,'#1d1606',0)};
+var MEMBERS=[
+  {name:'Javi',cap:true,av:ME.av},
+  {name:'Lucía',av:av('#f1c27d',2,'#8e4b1f',0,0,'#c0392b',3)},
+  {name:'Dani',av:av('#c68642',3,'#111111',2,2,'#3f9b5b',1,1,'#2f6fd6')},
+  {name:'Marta',av:av('#ffdbac',7,'#d9a441',0,1,'#7b3fa0',2)},
+  {name:'Iago',av:av('#8d5524',4,'#111111',1,0,'#e67e22',4)}
+];
+var TEAMS=[
+  {n:'Los Sabelotodo',me:true,j:[34,41,28,37],esc:null,tr:1},
+  {n:'Cerebros de Barra',j:[40,38,35,33],esc:{shape:1,c1:'#2f6fd6',c2:'#f4f1e6',ic:'⚡'},tr:0},
+  {n:'Vermú y Victoria',j:[29,44,39,30],esc:{shape:2,c1:'#c0392b',c2:'#f6e7b0',ic:'♛'},tr:-1},
+  {n:'Los del Fondo',j:[31,30,36,38],esc:{shape:3,c1:'#3f9b5b',c2:'#1d1606',ic:'♣'},tr:2},
+  {n:'Quiz Me If You Can',j:[27,33,31,35],esc:{shape:0,c1:'#7b3fa0',c2:'#f6e7b0',ic:'✦'},tr:0},
+  {n:'Tui Trivia Club',j:[25,29,33,27],esc:{shape:1,c1:'#16a3a3',c2:'#1d1606',ic:'☾'},tr:-1},
+  {n:'Los Nocturnos',j:[22,26,24,31],esc:{shape:2,c1:'#1d1606',c2:'#c7a84d',ic:'☠'},tr:1},
+  {n:'Cañas y Respuestas',j:[20,24,27,22],esc:{shape:3,c1:'#e67e22',c2:'#fffdf8',ic:'☕'},tr:0}
+];
+var DATES=[
+  {d:26,m:'nov',w:'Jueves',h:'21:30',j:5,today:true,aforo:12,ins:9},
+  {d:10,m:'dic',w:'Jueves',h:'21:30',j:6,aforo:12,ins:4},
+  {d:17,m:'dic',w:'Jueves',h:'21:30',j:7,aforo:12,ins:12},
+  {d:14,m:'ene',w:'Jueves',h:'21:30',j:8,aforo:12,ins:1}
+];
+var LIGA={nombre:'Liga de invierno',jornadas:10,premio:'Cena para todo el equipo + camisetas',pAsist:300};
+
+/* ===== Escudo ===== */
+var SHAPES=[
+  'M40 6 L72 16 L70 52 Q66 78 40 94 Q14 78 10 52 L8 16Z',
+  'M12 8 H68 V58 Q68 84 40 94 Q12 84 12 58Z',
+  'M40 4 L76 26 L76 70 L40 96 L4 70 L4 26Z',
+  'M40 6 A44 44 0 1 1 39.9 6Z'
+];
+function escudo(e,size,name){
+  e=e||S.esc;size=size||56;
+  var p=SHAPES[e.shape%4];
+  return '<svg viewBox="0 0 80 100" width="'+size+'" height="'+(size*1.25)+'" aria-label="Escudo'+(name?' de '+name:'')+'" style="flex:none;filter:drop-shadow(0 3px 0 rgba(0,0,0,.35))">'
+   +'<path d="'+p+'" fill="'+e.c1+'" stroke="#1b1410" stroke-width="2.4" stroke-linejoin="round"/>'
+   +'<path d="'+p+'" fill="'+e.c2+'" transform="translate(40 50) scale(.72) translate(-40 -50)" stroke="#1b1410" stroke-width="1.6"/>'
+   +'<path d="M14 20 Q40 10 66 20" stroke="rgba(255,255,255,.35)" stroke-width="3" fill="none" stroke-linecap="round"/>'
+   +'<text x="40" y="'+(e.shape===3?62:60)+'" text-anchor="middle" font-size="30" fill="'+e.c1+'" font-family="Arial, sans-serif" stroke="#1b1410" stroke-width=".8">'+e.ic+'</text></svg>';
+}
+function teamEsc(t){return t.me?S.esc:t.esc}
+function teamName(t){return t.me?S.esc.name:t.n}
+
+/* ===== Utilidades ===== */
+var $=function(id){return document.getElementById(id)};
+function total(t){return t.j.reduce(function(a,b){return a+b},0)}
+function ranked(){return TEAMS.slice().sort(function(a,b){return total(b)-total(a)})}
+function myPos(){var r=ranked();for(var i=0;i<r.length;i++)if(r[i].me)return i+1}
+function toast(t){var el=$('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){el.hidden=true},2600)}
+function head(title,eyebrow){return '<div class="head">'+(S.stack.length?'<button class="back" data-go="__back" aria-label="Volver">‹</button>':'')+'<div>'+(eyebrow?'<div class="eyebrow">'+eyebrow+'</div>':'')+'<h1>'+title+'</h1></div></div>'}
+function today(){return DATES[0]}
+function qr(){var c='';var seed=7;for(var y=0;y<21;y++)for(var x=0;x<21;x++){seed=(seed*9301+49297)%233280;var f=(x<7&&y<7)||(x>13&&y<7)||(x<7&&y>13);
+  var on=f?((x%6===0||y%6===0||(x>13&&(x===14||x===20))||(y>13&&(y===14||y===20)))||((x>1&&x<5)||(x>15&&x<19))&&((y>1&&y<5)||(y>15&&y<19))):seed/233280>.5;
+  if(on)c+='<rect x="'+x+'" y="'+y+'" width="1" height="1"/>'}return '<svg class="qr" viewBox="0 0 21 21" aria-label="QR del equipo">'+c+'</svg>'}
+
+/* ===== Pantallas del cliente ===== */
+var V={};
+V.portada=function(){
+  var t=today();
+  return '<div class="pass"><div><div class="t">PASAPORTE<br>LA BURBUJA</div><div class="s">SALA · BAR · TERRAZA</div><div class="num">Pasaporte nº 12 · Javi</div></div></div>'
+   +(S.day?'<button class="btn gold quizBtn" data-go="quiz">QUIZ · HOY '+t.h+'<small>Jornada '+t.j+' de la '+LIGA.nombre+'</small></button>':'')
+   +'<div class="stack" style="margin-top:16px"><button class="btn ivory" data-go="juegos">🎮 JUEGOS</button><button class="btn ghost" data-toast="Aquí sigue el cupón de siempre">MI CUPÓN</button></div>'
+   +'<p class="small" style="margin-top:14px;text-align:center">'+(S.day?'El botón QUIZ solo aparece en la portada el día que hay jornada.':'Hoy no hay quiz: el botón de la portada no aparece. El quiz sigue en JUEGOS.')+'</p>';
+};
+V.juegos=function(){
+  return head('Juegos')+'<div class="gamegrid">'
+   +'<div class="tile star" data-go="quiz" role="button" tabindex="0"><span class="ic">🧠</span>QUIZ<span class="tag">'+(S.day?'Hoy a las '+today().h+' · Liga en marcha':'Próximo: '+fmt(DATES[1]))+'</span></div>'
+   +['🧩 Puzle del cartel','🃏 Memory','🥁 Tap the Beat','🍸 Barman Exprés'].map(function(g){var p=g.split(' ');return '<div class="tile" data-toast="Juego ya existente"><span class="ic">'+p[0]+'</span>'+p.slice(1).join(' ')+'</div>'}).join('')
+   +'</div><p class="small" style="margin-top:14px">El QUIZ está siempre aquí, haya jornada o no.</p>';
+};
+function fmt(d){return d.w.toLowerCase()+' '+d.d+' '+d.m+' · '+d.h}
+V.quiz=function(){
+  var t=today(),h=head('Quiz',LIGA.nombre);
+  var top=S.day
+    ?'<div class="liveCard"><span class="live">HOY · '+t.h+'</span><div class="round">JORNADA '+t.j+'</div><div class="small">'+t.w+' '+t.d+' '+t.m+' · La Burbuja</div>'
+      +'<div class="stack" style="margin-top:14px">'
+      +(S.team?'<button class="btn gold" data-go="directo">ENTRAR AL QUIZ<small>'+S.esc.name+' · '+(S.inscrito?'inscritos ✓':'sin inscribir')+'</small></button>'
+               :'<button class="btn gold" data-go="equipo">ÚNETE A UN EQUIPO PARA JUGAR</button>')
+      +'</div></div>'
+    :'<div class="dark"><div class="eyebrow">Próxima jornada</div><div style="font:700 24px var(--f-disp);margin-top:6px;color:var(--oro-claro)">'+fmt(DATES[1]).toUpperCase()+'</div><div class="small">Jornada '+DATES[1].j+' · inscríbete abajo</div></div>';
+  return h+top
+   +'<div class="stack" style="margin-top:16px">'
+   +'<button class="btn ivory" data-go="liga">🏆 CLASIFICACIÓN<small>Vais '+myPos()+'º de '+TEAMS.length+' equipos</small></button>'
+   +'<button class="btn ivory" data-go="equipo">🛡️ MI EQUIPO<small>'+(S.team?S.esc.name+' · '+MEMBERS.length+' miembros':'Crea uno o únete con un código')+'</small></button>'
+   +'<button class="btn ghost" data-go="historial">MIS JORNADAS</button></div>'
+   +'<h2>Calendario</h2><div class="dates">'+DATES.slice(S.day?0:1).map(dateRow).join('')+'</div>'
+   +'<h2>Cómo funciona</h2><div class="dark small" style="color:var(--oro-claro)">Equipos de 2 a 6. Responde el móvil del capitán; el resto ve la partida. Ir a una jornada suma un sello o '+LIGA.pAsist+' puntos al pasaporte de cada miembro. Premio de la liga: '+LIGA.premio+'.</div>';
+};
+function dateRow(d,i){
+  var key='j'+d.j,ins=d.today?S.inscrito:!!S.joined[key],full=d.ins>=d.aforo&&!ins;
+  var chip=full?'<span class="chip c-full">Completo</span>':ins?'<span class="chip c-ok">Inscritos ✓</span>':'<button class="chip c-no" data-ins="'+key+'" style="cursor:pointer;background:none">Inscribirse</button>';
+  if(!S.team&&!ins&&!full)chip='<span class="chip c-no">Necesitas equipo</span>';
+  return '<div class="date"><div class="cal"><b>'+d.d+'</b><span>'+d.m+'</span></div><div><div class="tt">'+(d.today?'HOY · ':'')+d.w+' '+d.h+'</div><div class="st">Jornada '+d.j+' · '+(d.ins+(ins&&!d.today&&S.joined[key]?1:0))+'/'+d.aforo+' equipos</div></div>'+chip+'</div>';
+}
+V.liga=function(){
+  var r=ranked(),me=myPos();
+  var pod=[1,0,2].map(function(i){var t=r[i],hgt=[78,58,44][i];return '<div class="pod">'+escudo(teamEsc(t),i===0?50:40,teamName(t))+'<div class="nm">'+teamName(t)+'</div><div class="pt">'+total(t)+' pts</div><div class="blk" style="height:'+hgt+'px">'+(i+1)+'</div></div>'}).join('');
+  return head('Clasificación',LIGA.nombre+' · '+TEAMS[0].j.length+' de '+LIGA.jornadas+' jornadas')
+   +'<div class="podium">'+pod+'</div>'
+   +'<div class="card" style="padding:10px 10px 6px"><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>#</th><th>Equipo</th><th style="text-align:right">J'+TEAMS[0].j.length+'</th><th style="text-align:right">Total</th></tr></thead><tbody>'
+   +r.map(function(t,i){var tr=t.tr>0?'<span class="trend" style="color:#3f9b5b">▲'+t.tr+'</span>':t.tr<0?'<span class="trend" style="color:#c0392b">▼'+(-t.tr)+'</span>':'<span class="trend" style="color:#a59a83">=</span>';
+     return '<tr class="'+(t.me?'me':'')+'"><td class="pos">'+(i+1)+'</td><td><div class="tm">'+escudo(teamEsc(t),26)+'<span>'+teamName(t)+'</span> '+tr+'</div></td><td class="n">'+t.j[t.j.length-1]+'</td><td class="n">'+total(t)+'</td></tr>'}).join('')
+   +'</tbody></table></div></div>'
+   +'<p class="small" style="margin-top:12px">Premio de la liga: '+LIGA.premio+'. Vais '+me+'º.</p>';
+};
+V.equipo=function(){
+  if(!S.team)return head('Mi equipo')+'<div class="card"><h3>Aún no tienes equipo</h3><p class="muted">El capitán lo crea y los demás se unen con su código o su QR.</p></div>'
+   +'<div class="stack" style="margin-top:16px"><button class="btn gold" data-go="escudo">CREAR EQUIPO</button></div>'
+   +'<h2>Unirme con un código</h2><div class="field"><label for="joinCode">Código del equipo</label><input id="joinCode" placeholder="Ej. SBT-482" autocomplete="off"></div>'
+   +'<button class="btn ivory" data-act="join">UNIRME</button><p class="small" style="margin-top:10px">También puedes escanear el QR del móvil del capitán con la cámara.</p>';
+  return head('Mi equipo',LIGA.nombre)
+   +'<div class="card"><div class="team">'+escudo(S.esc,64,S.esc.name)+'<div style="min-width:0"><h3>'+S.esc.name+'</h3><div class="muted">'+MEMBERS.length+' de 6 miembros · '+myPos()+'º en la liga</div></div></div>'
+   +'<div class="members">'+MEMBERS.map(function(m){return '<div class="mem">'+(m.cap?'<span class="cap">CAPITÁN</span>':'')+charSvgNew(m.av)+'<div class="nm">'+m.name+(m.name===ME.name?' (tú)':'')+'</div><div class="rl">'+(m.cap?'Responde en el quiz':'Ve la partida')+'</div></div>'}).join('')
+   +'<div class="mem" style="display:grid;place-items:center;border:2px dashed #c9b98e;background:none;color:#7d5f17;font-weight:600;font-size:13px">+1 hueco</div></div></div>'
+   +'<h2>Invita a tu gente</h2><div class="codebox">'+qr()+'<div><div class="small">Código del equipo</div><div class="code">SBT-482</div><div class="small">Que lo escaneen o lo escriban en QUIZ → MI EQUIPO</div></div></div>'
+   +'<div class="stack" style="margin-top:16px"><button class="btn ivory" data-go="escudo">EDITAR ESCUDO Y NOMBRE</button><button class="btn ivory" data-toast="Abre MI AVATAR, la pantalla que ya existe">🎨 MI AVATAR</button>'
+   +'<button class="btn ghost" data-toast="Solo el capitán: pasa el capitán a otro miembro">CAMBIAR CAPITÁN</button><button class="btn ghost" data-toast="Pediría confirmación antes de salir">SALIR DEL EQUIPO</button></div>';
+};
+V.escudo=function(){
+  var e=S.esc;
+  return head(S.team?'Escudo y nombre':'Crear equipo')
+   +'<div class="card"><div class="preview" id="escPrev">'+escudo(e,110,e.name)+'</div>'
+   +'<div class="field"><label for="tName">Nombre del equipo</label><input id="tName" maxlength="24" value="'+e.name.replace(/"/g,'&quot;')+'"></div>'
+   +'<div class="field"><label>Forma</label><div class="opts">'+SHAPES.map(function(p,i){return '<button class="opt'+(e.shape===i?' on':'')+'" data-esc="shape" data-val="'+i+'" aria-label="Forma '+(i+1)+'"><svg viewBox="0 0 80 100" width="22" height="28"><path d="'+p+'" fill="#1d1606"/></svg></button>'}).join('')+'</div></div>'
+   +'<div class="field"><label>Símbolo</label><div class="opts">'+ICONS.map(function(c){return '<button class="opt'+(e.ic===c?' on':'')+'" data-esc="ic" data-val="'+c+'">'+c+'</button>'}).join('')+'</div></div>'
+   +'<div class="field"><label>Color principal</label><div class="opts">'+COLS.map(function(c){return '<button class="swatch'+(e.c1===c?' on':'')+'" style="background:'+c+'" data-esc="c1" data-val="'+c+'" aria-label="Color '+c+'"></button>'}).join('')+'</div></div>'
+   +'<div class="field"><label>Color de fondo</label><div class="opts">'+COLS.map(function(c){return '<button class="swatch'+(e.c2===c?' on':'')+'" style="background:'+c+'" data-esc="c2" data-val="'+c+'" aria-label="Fondo '+c+'"></button>'}).join('')+'</div></div>'
+   +'<p class="muted" style="margin:0">Solo opciones cerradas, como el avatar: no hay que moderar nada salvo el nombre.</p></div>'
+   +'<div class="stack" style="margin-top:16px"><button class="btn ivory" data-act="rand">AL AZAR</button><button class="btn gold" data-act="saveEsc">'+(S.team?'GUARDAR':'CREAR EQUIPO')+'</button></div>';
+};
+V.directo=function(){
+  var t=today();
+  return head('Jornada '+t.j,'En directo · '+S.esc.name)
+   +'<div class="liveCard"><span class="live">EN DIRECTO</span><div class="round">RONDA 2</div><div class="small">Pregunta 7 de 10</div><div class="bar"><i style="width:68%"></i></div>'
+   +'<div class="stack" style="margin-top:14px"><button class="btn gold" data-toast="Abre la app del quiz (falta el enlace del organizador)">ABRIR EL QUIZ<small>Tú eres el capitán: respondes por el equipo</small></button></div></div>'
+   +'<h2>¿Quién ha venido?</h2><div class="dark">'+MEMBERS.map(function(m,i){return '<div class="check">'+charSvgNew(m.av,{crop:1})+'<span class="who">'+m.name+'</span>'+(i<4?'<span class="chip c-ok">Aquí ✓</span>':'<span class="chip c-no">Sin llegar</span>')+'</div>'}).join('')+'</div>'
+   +'<p class="small" style="margin-top:10px">Cada miembro marca «Estoy aquí» al escanear el QR de la mesa. Al acabar la jornada suma un sello o '+LIGA.pAsist+' puntos a su pasaporte.</p>'
+   +'<div class="stack" style="margin-top:14px"><button class="btn ivory" data-act="here">ESTOY AQUÍ</button></div>';
+};
+V.historial=function(){
+  var mine=TEAMS[0];
+  return head('Mis jornadas',S.esc.name)
+   +'<div class="hist">'+mine.j.map(function(p,i){return '<div class="dark"><div><div style="font-weight:600;color:var(--oro-claro)">Jornada '+(i+1)+'</div><div class="small">'+(['15 oct','29 oct','12 nov','19 nov'][i]||'26 nov')+' · '+(['3º','1º','6º','2º'][i]||'—')+' de la noche</div></div><div style="text-align:right"><div style="font:700 22px var(--f-disp);color:var(--oro-claro)">'+p+'</div><div class="small">+'+LIGA.pAsist+' pts pasaporte</div></div></div>'}).join('')+'</div>';
+};
+
+/* ===== Pantallas de gestión (Felipe) ===== */
+V.gestion=function(){
+  var t=today();
+  return '<div class="head"><div><div class="eyebrow">La Burbuja · Gestión</div><h1>Quiz</h1></div></div>'
+   +'<div class="stat3"><div class="stat"><b>'+TEAMS.length+'</b><span>equipos</span></div><div class="stat"><b>'+t.ins+'/'+t.aforo+'</b><span>hoy inscritos</span></div><div class="stat"><b>'+TEAMS[0].j.length+'/'+LIGA.jornadas+'</b><span>jornadas</span></div></div>'
+   +'<div class="stack" style="margin-top:16px">'
+   +'<button class="btn gold" data-go="gResultados">RESULTADOS DE HOY<small>Jornada '+t.j+' · meter puntos por equipo</small></button>'
+   +'<button class="btn ivory" data-go="gCalendario">📅 CALENDARIO DE JORNADAS</button>'
+   +'<button class="btn ivory" data-go="gEquipos">🛡️ EQUIPOS E INSCRIPCIONES</button>'
+   +'<button class="btn ivory" data-go="gAjustes">⚙️ AJUSTES DEL QUIZ</button></div>'
+   +'<p class="small" style="margin-top:14px">Si la app del organizador permite enviar resultados, esta pantalla se rellena sola. Si no, Felipe los mete aquí.</p>';
+};
+V.gCalendario=function(){
+  return head('Calendario',LIGA.nombre)
+   +'<div class="dates">'+DATES.map(function(d){return '<div class="date"><div class="cal"><b>'+d.d+'</b><span>'+d.m+'</span></div><div><div class="tt">Jornada '+d.j+' · '+d.h+'</div><div class="st">'+d.ins+'/'+d.aforo+' equipos inscritos</div></div><button class="chip c-no" style="background:none;cursor:pointer" data-toast="Editar o anular la jornada">Editar</button></div>'}).join('')+'</div>'
+   +'<h2>Añadir jornada</h2><div class="card"><div class="split"><div class="field"><label for="nd">Fecha</label><input id="nd" type="date" value="2027-01-28"></div><div class="field"><label for="nh">Hora</label><input id="nh" type="time" value="21:30"></div></div>'
+   +'<div class="field"><label for="na">Aforo (equipos)</label><input id="na" type="number" value="12" min="2" max="40"></div>'
+   +'<button class="btn gold" data-act="addDate">AÑADIR JORNADA</button></div>';
+};
+V.gEquipos=function(){
+  var t=today();
+  return head('Equipos','Jornada '+t.j+' · hoy')
+   +'<div class="card">'+ranked().map(function(tm,i){return '<div class="row"><div class="tm">'+escudo(teamEsc(tm),28)+'<span>'+teamName(tm)+'</span></div><span class="chip '+(i<t.ins?'c-ok':'c-no')+'">'+(i<t.ins?'Inscrito':'No viene')+'</span></div>'}).join('')+'</div>'
+   +'<p class="small" style="margin-top:10px">Felipe puede cambiar un nombre ofensivo, pasar un miembro a otro equipo o eliminar un equipo.</p>';
+};
+V.gResultados=function(){
+  var t=today(),r=ranked();
+  return head('Resultados','Jornada '+t.j+' · '+t.d+' '+t.m)
+   +'<div class="card">'+r.map(function(tm){return '<div class="row"><div class="tm">'+escudo(teamEsc(tm),28)+'<span>'+teamName(tm)+'</span></div><input class="ptsIn" type="number" inputmode="numeric" min="0" id="pts_'+TEAMS.indexOf(tm)+'" placeholder="pts" aria-label="Puntos de '+teamName(tm)+'"></div>'}).join('')+'</div>'
+   +'<div class="stack" style="margin-top:16px"><button class="btn gold" data-act="saveRes">GUARDAR Y PUBLICAR<small>Actualiza la clasificación y da el sello de asistencia</small></button></div>';
+};
+V.gAjustes=function(){
+  return head('Ajustes del quiz')
+   +'<div class="card"><div class="field"><label for="a1">Nombre de la liga</label><input id="a1" value="'+LIGA.nombre+'"></div>'
+   +'<div class="split"><div class="field"><label for="a2">Jornadas</label><input id="a2" type="number" value="'+LIGA.jornadas+'"></div><div class="field"><label for="a3">Miembros máx.</label><input id="a3" type="number" value="6"></div></div>'
+   +'<div class="field"><label for="a4">Premio por asistir</label><select id="a4"><option>Un sello en el cupón</option><option selected>300 puntos</option><option>Nada</option></select></div>'
+   +'<div class="field"><label for="a5">Premio de la liga</label><input id="a5" value="'+LIGA.premio+'"></div>'
+   +'<div class="field"><label for="a6">Enlace de la app del quiz</label><input id="a6" placeholder="Pendiente del organizador"></div>'
+   +'<button class="btn gold" data-toast="Guardado (demo)">GUARDAR</button></div>';
+};
+
+/* ===== Navegación ===== */
+function render(){
+  var sc=S.screen;
+  if(S.view==='own'&&!/^g/.test(sc))sc=S.screen='gestion';
+  if(S.view==='cli'&&/^g/.test(sc))sc=S.screen='portada';
+  $('app').innerHTML=(V[sc]||V.portada)()+'<div class="foot">Maqueta del QUIZ para el Pasaporte La Burbuja · datos de ejemplo</div>';
+}
+function go(s){if(s==='__back'){S.screen=S.stack.pop()||'portada'}else{S.stack.push(S.screen);S.screen=s}render();window.scrollTo(0,0)}
+function setSw(id,cb){$(id).addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;[].forEach.call(this.children,function(x){x.classList.toggle('on',x===b)});cb(b.dataset.v);S.stack=[];render();window.scrollTo(0,0)})}
+setSw('swView',function(v){S.view=v;S.screen=v==='own'?'gestion':'portada'});
+setSw('swDay',function(v){S.day=v==='1'});
+setSw('swTeam',function(v){S.team=v==='1';S.screen=S.view==='own'?'gestion':'quiz';S.stack=S.view==='own'?[]:['portada']});
+document.addEventListener('click',function(e){
+  var el=e.target.closest('[data-go],[data-toast],[data-act],[data-esc],[data-ins]');if(!el)return;
+  if(el.dataset.go)return go(el.dataset.go);
+  if(el.dataset.toast)return toast(el.dataset.toast);
+  if(el.dataset.ins){S.joined[el.dataset.ins]=true;render();return toast('Equipo inscrito en la jornada')}
+  if(el.dataset.esc){var k=el.dataset.esc,v=el.dataset.val;S.esc[k]=k==='shape'?+v:v;var nm=$('tName');if(nm)S.esc.name=nm.value||S.esc.name;render();return}
+  var a=el.dataset.act;
+  if(a==='rand'){S.esc.shape=Math.floor(Math.random()*4);S.esc.ic=ICONS[Math.floor(Math.random()*ICONS.length)];S.esc.c1=COLS[Math.floor(Math.random()*COLS.length)];do{S.esc.c2=COLS[Math.floor(Math.random()*COLS.length)]}while(S.esc.c2===S.esc.c1);var n=$('tName');if(n)S.esc.name=n.value||S.esc.name;render()}
+  if(a==='saveEsc'){var n2=$('tName');S.esc.name=(n2&&n2.value.trim())||S.esc.name;var was=S.team;S.team=true;$('swTeam').children[0].classList.add('on');$('swTeam').children[1].classList.remove('on');S.stack=['portada','quiz'];S.screen='equipo';render();toast(was?'Escudo guardado':'Equipo creado. Comparte el código.')}
+  if(a==='join'){var c=$('joinCode').value.trim();if(!c)return toast('Escribe el código del equipo');S.team=true;$('swTeam').children[0].classList.add('on');$('swTeam').children[1].classList.remove('on');S.screen='equipo';render();toast('Te has unido a '+S.esc.name)}
+  if(a==='here')toast('Asistencia marcada. Sello al terminar la jornada.');
+  if(a==='addDate'){var d=$('nd').value,h=$('nh').value,ar=+$('na').value||12;if(!d)return toast('Elige una fecha');var p=d.split('-'),ms=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    DATES.push({d:+p[2],m:ms[+p[1]-1],w:'Jueves',h:h,j:DATES[DATES.length-1].j+1,aforo:ar,ins:0});render();toast('Jornada añadida')}
+  if(a==='saveRes'){var any=false;TEAMS.forEach(function(t,i){var v=$('pts_'+i).value;if(v!==''){t.j.push(+v);any=true}else t.j.push(0)});
+    if(!any){TEAMS.forEach(function(t){t.j.pop()});return toast('Mete los puntos de al menos un equipo')}
+    S.view='cli';$('swView').children[0].classList.add('on');$('swView').children[1].classList.remove('on');S.stack=['portada','quiz'];S.screen='liga';render();window.scrollTo(0,0);toast('Publicado. Así lo ven los clientes.')}
+});
+document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.matches('[role=button]'))e.target.click()});
+render();
+</script>
