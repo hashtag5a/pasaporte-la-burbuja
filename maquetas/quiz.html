@@ -142,12 +142,49 @@ input,select{font:500 16px var(--f-txt);padding:12px;border-radius:10px;border:1
 .slots{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}.slot{aspect-ratio:1;border-radius:50%;border:1.5px dashed #c9b98e;display:grid;place-items:center;font:600 12px var(--f-txt);color:#9c8547}.slot.on{border:0;background:var(--foil);color:var(--tinta);font:700 13px var(--f-disp);box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)}
 .foot{margin-top:28px;font-size:12px;color:var(--gris);text-align:center}
 </style>
+<style>
+.tabs{display:flex;border:1.5px solid var(--oro);border-radius:999px;overflow:hidden;margin-bottom:12px}
+.tabs button{flex:1;background:none;border:0;color:var(--oro-claro);font:600 13px var(--f-txt);padding:9px;cursor:pointer}
+.tabs button.on{background:var(--oro);color:var(--tinta)}
+.tgl{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
+.tgl .sw2{width:52px;height:30px;border-radius:99px;background:#d9cba3;position:relative;border:0;cursor:pointer;flex:none}
+.tgl .sw2::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.4);transition:left .15s}
+.tgl .sw2.on{background:var(--verde)}.tgl .sw2.on::after{left:25px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.ans{aspect-ratio:1.4;border-radius:16px;border:0;font:700 40px var(--f-disp);color:#fff;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.45)}
+.ans:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.45)}
+.ans[disabled]{opacity:.35;cursor:default;transform:none}
+.ans.pick{opacity:1;outline:4px solid var(--oro-claro);outline-offset:3px}
+.a0{background:#c0392b}.a1{background:#2f6fd6}.a2{background:#d4a017}.a3{background:#3f9b5b}
+.timer{font:700 54px/1 var(--f-disp);color:var(--oro-claro);font-variant-numeric:tabular-nums}
+.timer.low{color:#ff8a7a}
+.warn{background:rgba(192,57,43,.18);border:1.5px solid var(--rojo);color:#ffc2b8;border-radius:12px;padding:10px 12px;font-size:13px;margin-top:12px}
+.info{background:rgba(199,168,77,.12);border:1px solid var(--oro-sombra);color:var(--oro-claro);border-radius:12px;padding:10px 12px;font-size:13px}
+.mem{cursor:pointer;border:2px solid transparent}
+.mem.voted{border-color:var(--tinta)}
+.badges{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;min-height:16px;margin-top:2px}
+.bd{font:700 9px var(--f-txt);border-radius:999px;padding:2px 6px;letter-spacing:.04em}
+.bd-cap{background:var(--tinta);color:var(--oro-claro)}
+.bd-adm{background:#7d5f17;color:#fff}
+.votes{font-size:10px;color:#6d6250;margin-top:2px}
+.otp{display:flex;gap:8px;justify-content:center}
+.otp input{width:44px;text-align:center;font:700 22px var(--f-disp);padding:10px 0}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:#4a4232;margin:10px 0}
+.consent input{width:20px;height:20px;flex:none;margin-top:1px}
+.qText{background:var(--marfil);color:var(--tinta);border-radius:12px;padding:12px;margin-top:8px}
+.qText b{display:block;font:700 13px var(--f-disp);letter-spacing:.06em;color:#7d5f17;text-transform:uppercase}
+.flagRow{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid #eadfc4;font-size:14px}
+.flagRow:first-of-type{border-top:0}
+.card .c-ok{color:#1f6b38;background:#e3f3e8}.card .c-full{color:#a02b1f;background:#f8e1dd}
+.scanBox{aspect-ratio:1;max-width:240px;margin:16px auto;border:3px solid var(--oro);border-radius:18px;display:grid;place-items:center;background:#fff;padding:18px}
+.scanBox .qr{width:100%;height:auto;padding:0}
+</style>
 
 <div class="demo"><div class="in">
   <b>Maqueta</b>
-  <span class="sw" id="swView"><button data-v="cli" class="on">Cliente</button><button data-v="own">Felipe (gestión)</button></span>
+  <span class="sw" id="swView"><button data-v="cli" class="on">Cliente</button><button data-v="own">Felipe</button></span>
   <span class="sw" id="swDay"><button data-v="1" class="on">Hoy hay quiz</button><button data-v="0">Sin quiz</button></span>
-  <span class="sw" id="swTeam"><button data-v="1" class="on">Con equipo</button><button data-v="0">Sin equipo</button></span>
+  <span class="sw" id="swUser"><button data-v="nuevo">Sin pasaporte</button><button data-v="libre">Sin equipo</button><button data-v="equipo" class="on">En equipo</button></span>
   <div class="note">Datos de ejemplo. Nada se guarda.</div>
 </div></div>
 
@@ -222,242 +259,339 @@ function charSvgNew(sp,o){sp=sp||{};o=o||{};var d=chDefault();var S=chColor(sp.s
  return h+'</svg>'}
 function shade(h,p){var n=parseInt(h.slice(1),16),r=n>>16&255,g=n>>8&255,b=n&255;function f(c){return Math.round(p<0?c*(1+p):c+(255-c)*p)}return 'rgb('+f(r)+','+f(g)+','+f(b)+')'}
 
-/* ===== Datos de ejemplo ===== */
-var S={view:'cli',day:true,team:true,screen:'portada',stack:[],joined:{},
+/* ===== Estado de la demo ===== */
+var S={view:'cli',day:true,user:'equipo',screen:'portada',stack:[],
+  myIdx:-1,newTeam:false,pend:-1,joined:{},verPreg:false,
   esc:{shape:0,c1:'#c7a84d',c2:'#1d1606',ic:'★',name:'Los Sabelotodo'},
-  inscrito:true,isCap:true};
+  votes:{},myVote:'Javi',cap:'Javi',reqs:['Brais'],
+  q:{n:6,left:20,ans:null,out:0,lost:false},email:''};
+
 var ICONS=['★','♫','⚡','☠','♛','✦','☕','♣','✪','☾'];
 var COLS=['#c7a84d','#1d1606','#c0392b','#2f6fd6','#3f9b5b','#7b3fa0','#e67e22','#f4f1e6','#16a3a3','#e84393'];
-function av(skin,hair,hairC,beard,glasses,shirt,top,hat,hatC,expr){return{skin:skin,hair:hair,hairC:hairC,beard:beard,glasses:glasses,shirt:shirt,top:top||0,hat:hat||0,hatC:hatC||'#c0392b',expr:expr||0}}
-var ME={name:'Javi',av:av('#e0ac69',1,'#2b1d14',1,1,'#1d1606',0)};
-var MEMBERS=[
-  {name:'Javi',cap:true,av:ME.av},
-  {name:'Lucía',av:av('#f1c27d',2,'#8e4b1f',0,0,'#c0392b',3)},
-  {name:'Dani',av:av('#c68642',3,'#111111',2,2,'#3f9b5b',1,1,'#2f6fd6')},
-  {name:'Marta',av:av('#ffdbac',7,'#d9a441',0,1,'#7b3fa0',2)},
-  {name:'Iago',av:av('#8d5524',4,'#111111',1,0,'#e67e22',4)}
+function av(skin,hair,hairC,beard,glasses,shirt,top,hat,hatC){return{skin:skin,hair:hair,hairC:hairC,beard:beard,glasses:glasses,shirt:shirt,top:top||0,hat:hat||0,hatC:hatC||'#c0392b',expr:0}}
+var AVS={
+  'Javi':av('#e0ac69',1,'#2b1d14',1,1,'#1d1606',0),
+  'Lucía':av('#f1c27d',2,'#8e4b1f',0,0,'#c0392b',3),
+  'Dani':av('#c68642',3,'#111111',2,2,'#3f9b5b',1,1,'#2f6fd6'),
+  'Marta':av('#ffdbac',7,'#d9a441',0,1,'#7b3fa0',2),
+  'Iago':av('#8d5524',4,'#111111',1,0,'#e67e22',4),
+  'Brais':av('#e0ac69',3,'#5a3a1a',1,0,'#16a3a3',1),
+  'Marcos':av('#c68642',1,'#111111',1,0,'#2f6fd6',0),
+  'Sara':av('#ffdbac',2,'#111111',0,1,'#e84393',3),
+  'Noa':av('#f1c27d',7,'#c0392b',0,0,'#3f9b5b',2)
+};
+function avOf(n){return AVS[n]||av('#e0ac69',1,'#333333',0,0,'#7d5f17',0)}
+var MY_MEMBERS=['Javi','Lucía','Dani','Marta','Iago'];
+var BASE_VOTES={'Javi':1,'Lucía':2,'Dani':1};
+var OTHERS=[
+  {n:'Cerebros de Barra',j:[40,38,35,33],esc:{shape:1,c1:'#2f6fd6',c2:'#f4f1e6',ic:'⚡'},tr:0,adm:'Marcos',mem:['Marcos','Sara','Noa'],hoy:true,pts:41},
+  {n:'Vermú y Victoria',j:[29,44,39,30],esc:{shape:2,c1:'#c0392b',c2:'#f6e7b0',ic:'♛'},tr:-1,adm:'Sara',mem:['Sara','Iago'],hoy:true,pts:36},
+  {n:'Los del Fondo',j:[31,30,36,38],esc:{shape:3,c1:'#3f9b5b',c2:'#1d1606',ic:'♣'},tr:2,adm:'Noa',mem:['Noa','Dani','Marta'],hoy:true,pts:44},
+  {n:'Quiz Me If You Can',j:[27,33,31,35],esc:{shape:0,c1:'#7b3fa0',c2:'#f6e7b0',ic:'✦'},tr:0,adm:'Pablo',mem:['Pablo','Clara'],hoy:false,pts:0},
+  {n:'Tui Trivia Club',j:[25,29,33,27],esc:{shape:1,c1:'#16a3a3',c2:'#1d1606',ic:'☾'},tr:-1,adm:'Iván',mem:['Iván','Rubén','Clara'],hoy:true,pts:29},
+  {n:'Los Nocturnos',j:[22,26,24,31],esc:{shape:2,c1:'#1d1606',c2:'#c7a84d',ic:'☠'},tr:1,adm:'Clara',mem:['Clara','Rubén'],hoy:false,pts:0},
+  {n:'Cañas y Respuestas',j:[20,24,27,22],esc:{shape:3,c1:'#e67e22',c2:'#fffdf8',ic:'☕'},tr:0,adm:'Rubén',mem:['Rubén','Noa'],hoy:true,pts:33}
 ];
-var TEAMS=[
-  {n:'Los Sabelotodo',me:true,j:[34,41,28,37],esc:null,tr:1},
-  {n:'Cerebros de Barra',j:[40,38,35,33],esc:{shape:1,c1:'#2f6fd6',c2:'#f4f1e6',ic:'⚡'},tr:0},
-  {n:'Vermú y Victoria',j:[29,44,39,30],esc:{shape:2,c1:'#c0392b',c2:'#f6e7b0',ic:'♛'},tr:-1},
-  {n:'Los del Fondo',j:[31,30,36,38],esc:{shape:3,c1:'#3f9b5b',c2:'#1d1606',ic:'♣'},tr:2},
-  {n:'Quiz Me If You Can',j:[27,33,31,35],esc:{shape:0,c1:'#7b3fa0',c2:'#f6e7b0',ic:'✦'},tr:0},
-  {n:'Tui Trivia Club',j:[25,29,33,27],esc:{shape:1,c1:'#16a3a3',c2:'#1d1606',ic:'☾'},tr:-1},
-  {n:'Los Nocturnos',j:[22,26,24,31],esc:{shape:2,c1:'#1d1606',c2:'#c7a84d',ic:'☠'},tr:1},
-  {n:'Cañas y Respuestas',j:[20,24,27,22],esc:{shape:3,c1:'#e67e22',c2:'#fffdf8',ic:'☕'},tr:0}
-];
+var MYT={n:'Los Sabelotodo',j:[34,41,28,37],tr:1,pts:38,hoy:true};
 var DATES=[
   {d:26,m:'nov',w:'Jueves',h:'21:30',j:5,today:true,aforo:12,ins:9},
   {d:10,m:'dic',w:'Jueves',h:'21:30',j:6,aforo:12,ins:4},
   {d:17,m:'dic',w:'Jueves',h:'21:30',j:7,aforo:12,ins:12},
   {d:14,m:'ene',w:'Jueves',h:'21:30',j:8,aforo:12,ins:1}
 ];
-var LIGA={nombre:'Liga de invierno',jornadas:10,premio:'Cena para todo el equipo + camisetas',pAsist:300};
+var LIGA={nombre:'Liga de invierno',jornadas:10,premio:'Cena para todo el equipo + camisetas',pAsist:300,seg:20,bonus:1};
+var PREGS=['¿En qué año abrió La Burbuja sus puertas en Tui?','¿Qué banda gallega tocó aquí el 14 de noviembre?','Suena un fragmento: ¿de qué disco es?','¿Cuántos vinilos hay colgados en la pared de la barra?','Foto en pantalla: ¿qué puente es?','¿Cuántos grados tiene el vermú de la casa?'];
 
 /* ===== Escudo ===== */
-var SHAPES=[
-  'M40 6 L72 16 L70 52 Q66 78 40 94 Q14 78 10 52 L8 16Z',
-  'M12 8 H68 V58 Q68 84 40 94 Q12 84 12 58Z',
-  'M40 4 L76 26 L76 70 L40 96 L4 70 L4 26Z',
-  'M40 6 A44 44 0 1 1 39.9 6Z'
-];
+var SHAPES=['M40 6 L72 16 L70 52 Q66 78 40 94 Q14 78 10 52 L8 16Z','M12 8 H68 V58 Q68 84 40 94 Q12 84 12 58Z','M40 4 L76 26 L76 70 L40 96 L4 70 L4 26Z','M40 6 A44 44 0 1 1 39.9 6Z'];
 function escudo(e,size,name){
-  e=e||S.esc;size=size||56;
-  var p=SHAPES[e.shape%4];
+  e=e||S.esc;size=size||56;var p=SHAPES[e.shape%4];
   return '<svg viewBox="0 0 80 100" width="'+size+'" height="'+(size*1.25)+'" aria-label="Escudo'+(name?' de '+name:'')+'" style="flex:none;filter:drop-shadow(0 3px 0 rgba(0,0,0,.35))">'
    +'<path d="'+p+'" fill="'+e.c1+'" stroke="#1b1410" stroke-width="2.4" stroke-linejoin="round"/>'
    +'<path d="'+p+'" fill="'+e.c2+'" transform="translate(40 50) scale(.72) translate(-40 -50)" stroke="#1b1410" stroke-width="1.6"/>'
    +'<path d="M14 20 Q40 10 66 20" stroke="rgba(255,255,255,.35)" stroke-width="3" fill="none" stroke-linecap="round"/>'
    +'<text x="40" y="'+(e.shape===3?62:60)+'" text-anchor="middle" font-size="30" fill="'+e.c1+'" font-family="Arial, sans-serif" stroke="#1b1410" stroke-width=".8">'+e.ic+'</text></svg>';
 }
-function teamEsc(t){return t.me?S.esc:t.esc}
-function teamName(t){return t.me?S.esc.name:t.n}
+
+/* ===== Equipos ===== */
+function myTeam(){if(S.user!=='equipo')return null;return S.myIdx>=0?OTHERS[S.myIdx]:MYT}
+function allTeams(){return OTHERS.concat(S.user==='equipo'&&S.myIdx<0?[MYT]:[])}
+function tEsc(t){return t===MYT?S.esc:t.esc}
+function tName(t){return t===MYT?S.esc.name:t.n}
+function members(){var t=myTeam();if(!t)return[];if(t===MYT)return S.newTeam?['Javi'].concat(S.extra||[]):MY_MEMBERS.concat(S.extra||[]);return t.mem.concat(['Javi'])}
+function admin(){var t=myTeam();if(!t)return'';return t===MYT?'Javi':t.adm}
+function votesOf(n){return (S.votes[n]||0)+(S.myVote===n?1:0)}
+function isCap(){return S.cap==='Javi'}
+function amAdmin(){return admin()==='Javi'}
+function total(t){return t.j.reduce(function(a,b){return a+b},0)}
+function ranked(){return allTeams().slice().sort(function(a,b){return total(b)-total(a)})}
+function tonight(){return allTeams().filter(function(t){return t.hoy}).sort(function(a,b){return b.pts-a.pts})}
+function pos(list,t){return list.indexOf(t)+1}
+function resetTeamState(){var t=myTeam();S.extra=[];S.reqs=[];
+  if(!t){return}
+  if(t===MYT&&!S.newTeam){S.votes=JSON.parse(JSON.stringify(BASE_VOTES));S.myVote='Javi';S.cap='Javi';S.reqs=['Brais']}
+  else if(t===MYT){S.votes={};S.myVote='Javi';S.cap='Javi'}
+  else{S.votes={};S.votes[t.adm]=t.mem.length-1;S.myVote=t.adm;S.cap=t.adm}
+}
 
 /* ===== Utilidades ===== */
 var $=function(id){return document.getElementById(id)};
-function total(t){return t.j.reduce(function(a,b){return a+b},0)}
-function ranked(){return TEAMS.slice().sort(function(a,b){return total(b)-total(a)})}
-function myPos(){var r=ranked();for(var i=0;i<r.length;i++)if(r[i].me)return i+1}
-function toast(t){var el=$('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){el.hidden=true},2600)}
+function toast(t){var el=$('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){el.hidden=true},2800)}
 function head(title,eyebrow){return '<div class="head">'+(S.stack.length?'<button class="back" data-go="__back" aria-label="Volver">‹</button>':'')+'<div>'+(eyebrow?'<div class="eyebrow">'+eyebrow+'</div>':'')+'<h1>'+title+'</h1></div></div>'}
 function today(){return DATES[0]}
+function fmt(d){return d.w.toLowerCase()+' '+d.d+' '+d.m+' · '+d.h}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function qr(){var c='';var seed=7;for(var y=0;y<21;y++)for(var x=0;x<21;x++){seed=(seed*9301+49297)%233280;var f=(x<7&&y<7)||(x>13&&y<7)||(x<7&&y>13);
   var on=f?((x%6===0||y%6===0||(x>13&&(x===14||x===20))||(y>13&&(y===14||y===20)))||((x>1&&x<5)||(x>15&&x<19))&&((y>1&&y<5)||(y>15&&y<19))):seed/233280>.5;
-  if(on)c+='<rect x="'+x+'" y="'+y+'" width="1" height="1"/>'}return '<svg class="qr" viewBox="0 0 21 21" aria-label="QR del equipo">'+c+'</svg>'}
+  if(on)c+='<rect x="'+x+'" y="'+y+'" width="1" height="1"/>'}return '<svg class="qr" viewBox="0 0 21 21" aria-label="Código QR">'+c+'</svg>'}
+function teamRow(t,right,sub){return '<div class="row"><div class="tm">'+escudo(tEsc(t),30,tName(t))+'<div style="min-width:0"><div style="font-weight:600">'+esc(tName(t))+'</div>'+(sub?'<div class="muted">'+sub+'</div>':'')+'</div></div>'+(right||'')+'</div>'}
 
 /* ===== Pantallas del cliente ===== */
 var V={};
+/* --- Alta: alguien sin pasaporte escanea el QR del bar --- */
+V.qr=function(){
+  return '<div class="head"><div><div class="eyebrow">Cartel en la mesa / barra</div><h1>Juega al quiz</h1></div></div>'
+   +'<div class="info">Así llega quien no tiene pasaporte: escanea este QR con la cámara del móvil.</div>'
+   +'<div class="scanBox">'+qr()+'</div>'
+   +'<button class="btn gold" data-go="alta">SIMULAR ESCANEO</button>';
+};
+V.alta=function(){
+  return head('Tu pasaporte','Gratis · 20 segundos')
+   +'<div class="card"><h3>Hoy hay quiz</h3><p class="muted">Con el pasaporte juegas con tu equipo, sumas sellos y ves la clasificación.</p>'
+   +'<div class="field"><label for="mail">Tu email</label><input id="mail" type="email" inputmode="email" autocomplete="email" placeholder="tu@email.com" value="'+esc(S.email)+'"></div>'
+   +'<label class="consent"><input type="checkbox" id="c1" checked disabled> Acepto las condiciones y la política de privacidad del pasaporte.</label>'
+   +'<label class="consent"><input type="checkbox" id="c2"> Quiero recibir por email las fechas del quiz, conciertos y premios de La Burbuja.</label>'
+   +'<button class="btn gold" data-act="sendCode">RECIBIR CÓDIGO</button></div>'
+   +'<p class="small" style="margin-top:10px">La casilla de novedades va sin marcar: la ley exige que la marque la persona. Es la que permite el mail marketing.</p>';
+};
+V.codigo=function(){
+  return head('Mira tu email','Código de 6 cifras')
+   +'<div class="card"><p class="muted" style="margin-top:0">Lo hemos enviado a <b>'+esc(S.email||'tu@email.com')+'</b></p>'
+   +'<div class="otp">'+[0,1,2,3,4,5].map(function(i){return '<input id="o'+i+'" inputmode="numeric" maxlength="1" aria-label="Cifra '+(i+1)+'" value="'+'482915'[i]+'">'}).join('')+'</div>'
+   +'<div style="margin-top:16px"><button class="btn gold" data-act="verify">ENTRAR</button></div></div>';
+};
+/* --- Portada y reverso --- */
 V.portada=function(){
   var t=today();
   return '<div class="pass" data-go="reverso" role="button" tabindex="0" aria-label="Abrir el pasaporte" style="cursor:pointer"><div><div class="t">PASAPORTE<br>LA BURBUJA</div><div class="s">SALA · BAR · TERRAZA</div><div class="num">Pasaporte nº 12 · Javi</div><div class="small" style="margin-top:14px">Toca para darle la vuelta</div></div></div>'
    +(S.day?'<button class="btn gold quizBtn" data-go="quiz">QUIZ · HOY '+t.h+'<small>Jornada '+t.j+' de la '+LIGA.nombre+'</small></button>':'');
 };
 V.reverso=function(){
-  var slots='';for(var i=1;i<=10;i++)slots+='<div class="slot'+(i<=3?' on':'')+'">'+(i<=3?'LB':([3,5,7,10].indexOf(i)>=0?'🎁':i))+'</div>';
+  var slots='';for(var i=1;i<=10;i++)slots+='<div class="slot'+(i<=3?' on':'')+'">'+(i<=3?'LB':([5,7,10].indexOf(i)>=0?'🎁':i))+'</div>';
   return head('Mi pasaporte','Lo que ya existe')
    +'<div class="card"><h3>Mi cupón</h3><div class="slots">'+slots+'</div><p class="muted" style="margin:8px 0 0">Cupón, premios, la cola y conciertos: todo como ahora.</p></div>'
-   +'<h2>Juegos</h2>'
-   +'<div class="eyebrow" style="margin-bottom:8px">Quiz en La Burbuja</div>'
+   +'<h2>Juegos</h2><div class="eyebrow" style="margin-bottom:8px">Quiz en La Burbuja</div>'
    +'<div class="gamegrid"><div class="tile star" data-go="quiz" role="button" tabindex="0"><span class="ic">🧠</span>QUIZ<span class="tag">'+(S.day?'Hoy a las '+today().h+' · Liga en marcha':'Próximo: '+fmt(DATES[1]))+'</span></div></div>'
    +'<div class="eyebrow" style="margin:18px 0 8px">Fuera de concierto</div>'
    +'<div class="gamegrid">'+['🧩 Puzle del cartel','🃏 Memory','🥁 Tap the Beat','🍸 Barman Exprés'].map(function(g){var p=g.split(' ');return '<div class="tile" data-toast="Juego ya existente"><span class="ic">'+p[0]+'</span>'+p.slice(1).join(' ')+'</div>'}).join('')+'</div>';
 };
-function fmt(d){return d.w.toLowerCase()+' '+d.d+' '+d.m+' · '+d.h}
+/* --- Centro del quiz --- */
 V.quiz=function(){
-  var t=today(),h=head('Quiz',LIGA.nombre);
-  var top=S.day
-    ?'<div class="liveCard"><span class="live">HOY · '+t.h+'</span><div class="round">JORNADA '+t.j+'</div><div class="small">'+t.w+' '+t.d+' '+t.m+' · La Burbuja</div>'
-      +'<div class="stack" style="margin-top:14px">'
-      +(S.team?'<button class="btn gold" data-go="directo">ENTRAR AL QUIZ<small>'+S.esc.name+' · '+(S.inscrito?'inscritos ✓':'sin inscribir')+'</small></button>'
-               :'<button class="btn gold" data-go="elegir">ELIGE TU EQUIPO Y ENTRA<small>Un toque y estás dentro</small></button>')
-      +'</div></div>'
-    :'<div class="dark"><div class="eyebrow">Próxima jornada</div><div style="font:700 24px var(--f-disp);margin-top:6px;color:var(--oro-claro)">'+fmt(DATES[1]).toUpperCase()+'</div><div class="small">Jornada '+DATES[1].j+' · inscríbete abajo</div></div>';
-  return h+top
+  var t=today(),mt=myTeam(),cta;
+  if(!S.day)cta='<div class="dark"><div class="eyebrow">Próxima jornada</div><div style="font:700 24px var(--f-disp);margin-top:6px;color:var(--oro-claro)">'+fmt(DATES[1]).toUpperCase()+'</div><div class="small">Jornada '+DATES[1].j+'</div></div>';
+  else{
+    var btn;
+    if(mt)btn='<button class="btn gold" data-act="enter">ENTRAR AL QUIZ<small>Juegas con '+esc(tName(mt))+(isCap()?' · eres el capitán':' · capitán: '+S.cap)+'</small></button>';
+    else if(S.pend>=0)btn='<button class="btn gold" data-go="pendiente">ESPERANDO EL OK<small>'+esc(OTHERS[S.pend].adm)+' tiene que aceptarte en '+esc(OTHERS[S.pend].n)+'</small></button>';
+    else btn='<button class="btn gold" data-go="elegir">ENTRAR AL QUIZ<small>Crea tu equipo o únete al tuyo</small></button>';
+    cta='<div class="liveCard"><span class="live">HOY · '+t.h+'</span><div class="round">JORNADA '+t.j+'</div><div class="small">'+t.w+' '+t.d+' '+t.m+' · La Burbuja</div><div class="stack" style="margin-top:14px">'+btn+'</div></div>';
+  }
+  var r=ranked();
+  return head('Quiz',LIGA.nombre)+cta
    +'<div class="stack" style="margin-top:16px">'
-   +'<button class="btn ivory" data-go="liga">🏆 CLASIFICACIÓN<small>Vais '+myPos()+'º de '+TEAMS.length+' equipos</small></button>'
-   +'<button class="btn ivory" data-go="equipo">🛡️ MI EQUIPO<small>'+(S.team?S.esc.name+' · '+MEMBERS.length+' miembros':'Crea uno o únete con un código')+'</small></button>'
-   +'<button class="btn ghost" data-go="historial">MIS JORNADAS</button></div>'
+   +'<button class="btn ivory" data-go="liga">🏆 CLASIFICACIÓN<small>'+(mt?'Vais '+pos(r,mt)+'º de '+r.length+' en la liga':'Liga y la noche de hoy')+'</small></button>'
+   +'<button class="btn ivory" data-go="'+(mt?'equipo':S.pend>=0?'pendiente':'elegir')+'">🛡️ MI EQUIPO<small>'+(mt?esc(tName(mt))+' · '+members().length+' miembros':'Aún sin equipo')+'</small></button>'
+   +(mt?'<button class="btn ghost" data-go="historial">MIS JORNADAS</button>':'')+'</div>'
    +'<h2>Calendario</h2><div class="dates">'+DATES.slice(S.day?0:1).map(dateRow).join('')+'</div>'
-   +'<h2>Cómo funciona</h2><div class="dark small" style="color:var(--oro-claro)">Equipos de 2 a 6. Responde el móvil del capitán; el resto ve la partida. Ir a una jornada suma un sello o '+LIGA.pAsist+' puntos al pasaporte de cada miembro. Premio de la liga: '+LIGA.premio+'.</div>';
+   +'<h2>Cómo funciona</h2><div class="dark small" style="color:var(--oro-claro)">Quien crea el equipo es su administrador: acepta a los que piden entrar. El equipo vota quién es el capitán, y solo el capitán responde. Cada miembro con pasaporte que está en la jornada suma +'+LIGA.bonus+' punto al equipo y un sello en su cupón.</div>';
 };
-function dateRow(d,i){
-  var key='j'+d.j,ins=d.today?S.inscrito:!!S.joined[key],full=d.ins>=d.aforo&&!ins;
-  var chip=full?'<span class="chip c-full">Completo</span>':ins?'<span class="chip c-ok">Inscritos ✓</span>':'<button class="chip c-no" data-ins="'+key+'" style="cursor:pointer;background:none">Inscribirse</button>';
-  if(!S.team&&!ins&&!full)chip='<span class="chip c-no">Necesitas equipo</span>';
-  return '<div class="date"><div class="cal"><b>'+d.d+'</b><span>'+d.m+'</span></div><div><div class="tt">'+(d.today?'HOY · ':'')+d.w+' '+d.h+'</div><div class="st">Jornada '+d.j+' · '+(d.ins+(ins&&!d.today&&S.joined[key]?1:0))+'/'+d.aforo+' equipos</div></div>'+chip+'</div>';
+function dateRow(d){
+  var mt=myTeam(),key='j'+d.j,ins=d.today?!!mt:!!S.joined[key],full=d.ins>=d.aforo&&!ins;
+  var chip=full?'<span class="chip c-full">Completo</span>':ins?'<span class="chip c-ok">'+(d.today?'Jugáis hoy':'Inscritos ✓')+'</span>':mt?'<button class="chip c-no" data-ins="'+key+'" style="cursor:pointer;background:none">Avisar que vamos</button>':'<span class="chip c-no">Abierta</span>';
+  return '<div class="date"><div class="cal"><b>'+d.d+'</b><span>'+d.m+'</span></div><div><div class="tt">'+(d.today?'HOY · ':'')+d.w+' '+d.h+'</div><div class="st">Jornada '+d.j+' · '+(d.ins+(S.joined[key]?1:0))+'/'+d.aforo+' equipos</div></div>'+chip+'</div>';
 }
+/* --- Elegir equipo (primera vez o cambio) --- */
 V.elegir=function(){
-  var t=today(),caps=['Lucía','Marcos','Sara','Pablo','Noa','Iván','Clara','Rubén'],r=TEAMS.slice(0,t.ins);
-  return head('¿Cuál es tu equipo?','Jornada '+t.j+' · hoy')
-   +'<div class="card">'+r.map(function(tm,i){return '<div class="row"><div class="tm">'+escudo(teamEsc(tm),30)+'<div style="min-width:0"><div style="font-weight:600">'+teamName(tm)+'</div><div class="muted">Capitán: '+caps[i]+' · '+(3+i%3)+' dentro</div></div></div><button class="chip c-no" style="cursor:pointer;background:none;color:#7d5f17;border-color:#7d5f17" data-act="pick" data-i="'+TEAMS.indexOf(tm)+'">Entrar</button></div>'}).join('')+'</div>'
-   +'<div class="stack" style="margin-top:16px"><button class="btn ivory" data-go="escudo">CREAR EQUIPO NUEVO<small>Serás el capitán</small></button></div>'
-   +'<p class="small" style="margin-top:10px">Al entrar quedas inscrito con tu equipo en esta jornada y en la liga. El capitán puede sacar a quien se haya equivocado.</p>';
+  var mt=myTeam(),list=OTHERS.filter(function(t){return t!==mt});
+  list.sort(function(a,b){return (b.hoy?1:0)-(a.hoy?1:0)});
+  return head(mt?'Cambiar de equipo':'¿Con qué equipo juegas?','Jornada '+today().j+' · hoy')
+   +'<div class="field"><label for="buscar">Buscar equipo</label><input id="buscar" placeholder="Nombre del equipo" autocomplete="off"></div>'
+   +'<div class="card" id="teamList">'+list.map(function(t){var i=OTHERS.indexOf(t);
+      return '<div data-name="'+esc(t.n.toLowerCase())+'">'+teamRow(t,'<button class="chip c-no" style="cursor:pointer;background:none;color:#7d5f17;border-color:#7d5f17" data-act="ask" data-i="'+i+'">Pedir entrar</button>',(t.hoy?'✅ Ya está jugando hoy · ':'')+'Admin: '+t.adm+' · '+t.mem.length+' miembros')+'</div>'}).join('')+'</div>'
+   +'<div class="stack" style="margin-top:16px"><button class="btn gold" data-go="escudo">CREAR EQUIPO NUEVO<small>Serás el administrador y el capitán</small></button></div>'
+   +'<p class="small" style="margin-top:10px">Para entrar en un equipo, su administrador tiene que darte el OK. '+(mt?'Al entrar en otro dejas '+esc(tName(mt))+'.':'')+'</p>';
 };
-V.liga=function(){
-  var r=ranked(),me=myPos();
-  var pod=[1,0,2].map(function(i){var t=r[i],hgt=[78,58,44][i];return '<div class="pod">'+escudo(teamEsc(t),i===0?50:40,teamName(t))+'<div class="nm">'+teamName(t)+'</div><div class="pt">'+total(t)+' pts</div><div class="blk" style="height:'+hgt+'px">'+(i+1)+'</div></div>'}).join('');
-  return head('Clasificación',LIGA.nombre+' · '+TEAMS[0].j.length+' de '+LIGA.jornadas+' jornadas')
-   +'<div class="podium">'+pod+'</div>'
-   +'<div class="card" style="padding:10px 10px 6px"><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>#</th><th>Equipo</th><th style="text-align:right">J'+TEAMS[0].j.length+'</th><th style="text-align:right">Total</th></tr></thead><tbody>'
-   +r.map(function(t,i){var tr=t.tr>0?'<span class="trend" style="color:#3f9b5b">▲'+t.tr+'</span>':t.tr<0?'<span class="trend" style="color:#c0392b">▼'+(-t.tr)+'</span>':'<span class="trend" style="color:#a59a83">=</span>';
-     return '<tr class="'+(t.me?'me':'')+'"><td class="pos">'+(i+1)+'</td><td><div class="tm">'+escudo(teamEsc(t),26)+'<span>'+teamName(t)+'</span> '+tr+'</div></td><td class="n">'+t.j[t.j.length-1]+'</td><td class="n">'+total(t)+'</td></tr>'}).join('')
-   +'</tbody></table></div></div>'
-   +'<p class="small" style="margin-top:12px">Premio de la liga: '+LIGA.premio+'. Vais '+me+'º.</p>';
+V.pendiente=function(){
+  var t=OTHERS[S.pend];if(!t)return V.quiz();
+  return head('Solicitud enviada')
+   +'<div class="card" style="text-align:center"><div class="preview">'+escudo(t.esc,84,t.n)+'</div><h3>'+esc(t.n)+'</h3><p class="muted">'+esc(t.adm)+', su administrador, tiene que aceptarte. Le ha llegado un aviso a su pasaporte.</p></div>'
+   +'<div class="stack" style="margin-top:16px"><button class="btn gold" data-act="okDemo">SIMULAR EL OK DE '+esc(t.adm.toUpperCase())+'</button><button class="btn ghost" data-act="cancelReq">CANCELAR SOLICITUD</button></div>';
 };
+/* --- Mi equipo: miembros, votos de capitán, solicitudes --- */
 V.equipo=function(){
-  if(!S.team)return head('Mi equipo')+'<div class="card"><h3>Aún no tienes equipo</h3><p class="muted">El capitán lo crea y los demás se unen con su código o su QR.</p></div>'
-   +'<div class="stack" style="margin-top:16px"><button class="btn gold" data-go="escudo">CREAR EQUIPO</button></div>'
-   +'<h2>Unirme con un código</h2><div class="field"><label for="joinCode">Código del equipo</label><input id="joinCode" placeholder="Ej. SBT-482" autocomplete="off"></div>'
-   +'<button class="btn ivory" data-act="join">UNIRME</button><p class="small" style="margin-top:10px">También puedes escanear el QR del móvil del capitán con la cámara.</p>';
+  var mt=myTeam();if(!mt)return V.elegir();
+  var ms=members(),adm=admin();
+  var reqs=amAdmin()&&S.reqs.length?'<h2>Quieren entrar</h2><div class="card">'+S.reqs.map(function(n){return '<div class="row"><div class="tm">'+charSvgNew(avOf(n),{crop:1}).replace('class="cust','style="width:38px;height:auto" class="cust')+'<span>'+esc(n)+'</span></div><div style="display:flex;gap:6px"><button class="chip c-ok" style="cursor:pointer" data-act="acc" data-n="'+esc(n)+'">Aceptar</button><button class="chip c-full" style="cursor:pointer" data-act="rej" data-n="'+esc(n)+'">No</button></div></div>'}).join('')+'</div>':'';
   return head('Mi equipo',LIGA.nombre)
-   +'<div class="card"><div class="team">'+escudo(S.esc,64,S.esc.name)+'<div style="min-width:0"><h3>'+S.esc.name+'</h3><div class="muted">'+MEMBERS.length+' de 6 miembros · '+myPos()+'º en la liga</div></div></div>'
-   +'<div class="members">'+MEMBERS.map(function(m){var cp=S.isCap?m.cap:m.name==='Lucía';return '<div class="mem">'+(cp?'<span class="cap">CAPITÁN</span>':'')+charSvgNew(m.av)+'<div class="nm">'+m.name+(m.name===ME.name?' (tú)':'')+'</div><div class="rl">'+(cp?'Responde en el quiz':'Ve la partida')+'</div></div>'}).join('')
-   +'<div class="mem" style="display:grid;place-items:center;border:2px dashed #c9b98e;background:none;color:#7d5f17;font-weight:600;font-size:13px">+1 hueco</div></div></div>'
-   +'<h2>Invita a tu gente</h2><div class="codebox">'+qr()+'<div><div class="small">Código del equipo</div><div class="code">SBT-482</div><div class="small">Que lo escaneen o lo escriban en QUIZ → MI EQUIPO</div></div></div>'
-   +'<div class="stack" style="margin-top:16px"><button class="btn ivory" data-go="escudo">EDITAR ESCUDO Y NOMBRE</button><button class="btn ivory" data-toast="Abre MI AVATAR, la pantalla que ya existe">🎨 MI AVATAR</button>'
-   +''+(S.isCap?'<button class="btn ghost" data-toast="Pasa el capitán a otro miembro">CAMBIAR CAPITÁN</button>':'')+'<button class="btn ghost" data-toast="Pediría confirmación antes de salir">SALIR DEL EQUIPO</button></div>';
+   +'<div class="card"><div class="team">'+escudo(tEsc(mt),64,tName(mt))+'<div style="min-width:0"><h3>'+esc(tName(mt))+'</h3><div class="muted">'+ms.length+' de 6 · '+pos(ranked(),mt)+'º en la liga</div></div></div>'
+   +'<p class="muted" style="margin:12px 0 0"><b>Toca un avatar para votar al capitán.</b> El más votado responde las preguntas. Si hay empate, sigue el que estaba.</p>'
+   +'<div class="members">'+ms.map(function(n){var v=votesOf(n);return '<div class="mem'+(S.myVote===n?' voted':'')+'" data-act="vote" data-n="'+esc(n)+'" role="button" tabindex="0" aria-label="Votar a '+esc(n)+' como capitán">'+charSvgNew(avOf(n))+'<div class="nm">'+esc(n)+(n==='Javi'?' (tú)':'')+'</div><div class="badges">'+(S.cap===n?'<span class="bd bd-cap">CAPITÁN</span>':'')+(adm===n?'<span class="bd bd-adm">ADMIN</span>':'')+'</div><div class="votes">'+v+' voto'+(v===1?'':'s')+(S.myVote===n?' · el tuyo':'')+'</div></div>'}).join('')+'</div></div>'
+   +reqs
+   +'<div class="stack" style="margin-top:16px">'
+   +(amAdmin()?'<button class="btn ivory" data-go="escudo">EDITAR ESCUDO Y NOMBRE</button>':'')
+   +'<button class="btn ivory" data-toast="Abre MI AVATAR, la pantalla que ya existe">🎨 MI AVATAR</button>'
+   +'<button class="btn ghost" data-go="elegir">CAMBIAR DE EQUIPO</button>'
+   +'<button class="btn ghost" data-act="leave">SALIR DEL EQUIPO</button></div>';
 };
 V.escudo=function(){
-  var e=S.esc;
-  return head(S.team?'Escudo y nombre':'Crear equipo')
-   +'<div class="card"><div class="preview" id="escPrev">'+escudo(e,110,e.name)+'</div>'
-   +'<div class="field"><label for="tName">Nombre del equipo</label><input id="tName" maxlength="24" value="'+e.name.replace(/"/g,'&quot;')+'"></div>'
+  var e=S.esc,mt=myTeam(),editing=mt===MYT;
+  return head(editing?'Escudo y nombre':'Crear equipo')
+   +'<div class="card"><div class="preview">'+escudo(e,110,e.name)+'</div>'
+   +'<div class="field"><label for="tName">Nombre del equipo (el mismo que en el quiz)</label><input id="tName" maxlength="24" value="'+esc(editing?e.name:(S.draftName||''))+'" placeholder="Ej. Los Sabelotodo"></div>'
    +'<div class="field"><label>Forma</label><div class="opts">'+SHAPES.map(function(p,i){return '<button class="opt'+(e.shape===i?' on':'')+'" data-esc="shape" data-val="'+i+'" aria-label="Forma '+(i+1)+'"><svg viewBox="0 0 80 100" width="22" height="28"><path d="'+p+'" fill="#1d1606"/></svg></button>'}).join('')+'</div></div>'
    +'<div class="field"><label>Símbolo</label><div class="opts">'+ICONS.map(function(c){return '<button class="opt'+(e.ic===c?' on':'')+'" data-esc="ic" data-val="'+c+'">'+c+'</button>'}).join('')+'</div></div>'
    +'<div class="field"><label>Color principal</label><div class="opts">'+COLS.map(function(c){return '<button class="swatch'+(e.c1===c?' on':'')+'" style="background:'+c+'" data-esc="c1" data-val="'+c+'" aria-label="Color '+c+'"></button>'}).join('')+'</div></div>'
-   +'<div class="field"><label>Color de fondo</label><div class="opts">'+COLS.map(function(c){return '<button class="swatch'+(e.c2===c?' on':'')+'" style="background:'+c+'" data-esc="c2" data-val="'+c+'" aria-label="Fondo '+c+'"></button>'}).join('')+'</div></div>'
-   +'<p class="muted" style="margin:0">Solo opciones cerradas, como el avatar: no hay que moderar nada salvo el nombre.</p></div>'
-   +'<div class="stack" style="margin-top:16px"><button class="btn ivory" data-act="rand">AL AZAR</button><button class="btn gold" data-act="saveEsc">'+(S.team?'GUARDAR':'CREAR EQUIPO')+'</button></div>';
+   +'<div class="field"><label>Color de fondo</label><div class="opts">'+COLS.map(function(c){return '<button class="swatch'+(e.c2===c?' on':'')+'" style="background:'+c+'" data-esc="c2" data-val="'+c+'" aria-label="Fondo '+c+'"></button>'}).join('')+'</div></div></div>'
+   +'<div class="stack" style="margin-top:16px"><button class="btn ivory" data-act="rand">AL AZAR</button><button class="btn gold" data-act="saveEsc">'+(editing?'GUARDAR':'CREAR Y JUGAR')+'</button></div>';
 };
+/* --- Partida en directo --- */
 V.directo=function(){
-  var t=today();
-  return head('Jornada '+t.j,'En directo · '+S.esc.name)
-   +'<div class="liveCard"><span class="live">EN DIRECTO</span><div class="round">RONDA 2</div><div class="small">Pregunta 7 de 10</div><div class="bar"><i style="width:68%"></i></div>'
-   +'<div class="stack" style="margin-top:14px"><button class="btn gold" data-toast="Abre la app del quiz (falta el enlace del organizador)">ABRIR EL QUIZ<small>'+(S.isCap?'Tú eres el capitán: respondes por el equipo':'Responde Lucía (capitana). Tú ves la partida')+'</small></button></div></div>'
-   +'<h2>¿Quién ha venido?</h2><div class="dark">'+MEMBERS.map(function(m,i){return '<div class="check">'+charSvgNew(m.av,{crop:1})+'<span class="who">'+m.name+'</span>'+(i<4?'<span class="chip c-ok">Aquí ✓</span>':'<span class="chip c-no">Sin llegar</span>')+'</div>'}).join('')+'</div>'
-   +'<p class="small" style="margin-top:10px">Cada miembro marca «Estoy aquí» al escanear el QR de la mesa. Al acabar la jornada suma un sello o '+LIGA.pAsist+' puntos a su pasaporte.</p>'
-   +'<div class="stack" style="margin-top:14px"><button class="btn ivory" data-act="here">ESTOY AQUÍ</button></div>';
+  var t=today(),mt=myTeam();if(!mt)return V.quiz();
+  var q=S.q,cap=isCap(),tn=tonight();
+  var hdr=head('Jornada '+t.j,'En directo · '+esc(tName(mt)));
+  var top='<div class="liveCard"><span class="live">EN DIRECTO</span><div class="small" style="margin-top:8px">Ronda 2 · Pregunta '+q.n+' de 10</div>';
+  if(cap){
+    top+='<div class="timer'+(q.left<=5?' low':'')+'" id="timer">'+(q.ans||q.left<=0?'✓':q.left)+'</div><div class="small">'+(q.ans?'Respuesta enviada: '+q.ans:q.left<=0?'Tiempo agotado':'La pregunta está en la pantalla del bar')+'</div>'
+     +'<div class="answers">'+['A','B','C','D'].map(function(l,i){return '<button class="ans a'+i+(q.ans===l?' pick':'')+'" data-act="answer" data-l="'+l+'"'+(q.ans||q.left<=0?' disabled':'')+'>'+l+'</button>'}).join('')+'</div>'
+     +(q.lost?'<div class="warn">Has salido del pasaporte durante la pregunta. Esta respuesta no puntúa y Felipe lo ve.</div>':'<div class="info" style="margin-top:12px">No salgas del pasaporte mientras haya una pregunta abierta: si lo haces, esa respuesta no puntúa.</div>')
+     +'<div style="margin-top:12px"><button class="btn ghost" data-act="nextQ">SIGUIENTE PREGUNTA (DEMO)</button></div>';
+  }else{
+    top+='<div class="round" style="font-size:28px">RESPONDE '+esc(S.cap.toUpperCase())+'</div><div class="small">Tu capitán contesta desde su móvil. Tú sigues la partida.</div>';
+  }
+  top+='</div>';
+  var verP=!cap&&S.verPreg?'<h2>Preguntas ya cerradas</h2>'+PREGS.slice(0,q.n-1).reverse().slice(0,3).map(function(p,i){return '<div class="qText"><b>Pregunta '+(q.n-1-i)+'</b>'+esc(p)+'</div>'}).join(''):'';
+  var rk='<h2>Esta noche</h2><div class="card" style="padding:10px"><table class="tbl"><tbody>'+tn.map(function(x,i){return '<tr class="'+(x===mt?'me':'')+'"><td class="pos">'+(i+1)+'</td><td><div class="tm">'+escudo(tEsc(x),24)+'<span>'+esc(tName(x))+'</span></div></td><td class="n">'+x.pts+'</td></tr>'}).join('')+'</tbody></table></div>';
+  var ms=members();
+  var bonus='<div class="info" style="margin-top:14px">'+ms.length+' miembros con pasaporte en la jornada: +'+(ms.length*LIGA.bonus)+' puntos para el equipo. Trae a tu gente y que se hagan el pasaporte.</div>';
+  return hdr+top+verP+rk+bonus;
+};
+/* --- Clasificación: esta noche y liga --- */
+V.liga=function(){
+  var tab=S.tab||(S.day?'noche':'liga'),mt=myTeam(),h=head('Clasificación',LIGA.nombre)
+   +'<div class="tabs">'+(S.day?'<button data-tab="noche" class="'+(tab==='noche'?'on':'')+'">Esta noche</button>':'')+'<button data-tab="liga" class="'+(tab==='liga'?'on':'')+'">Liga</button></div>';
+  if(tab==='noche'&&S.day){var tn=tonight();
+    return h+'<div class="card" style="padding:10px"><table class="tbl"><thead><tr><th>#</th><th>Equipo</th><th style="text-align:right">Pts</th></tr></thead><tbody>'+tn.map(function(x,i){return '<tr class="'+(x===mt?'me':'')+'"><td class="pos">'+(i+1)+'</td><td><div class="tm">'+escudo(tEsc(x),26)+'<span>'+esc(tName(x))+'</span></div></td><td class="n">'+x.pts+'</td></tr>'}).join('')+'</tbody></table></div><p class="small" style="margin-top:10px">Se actualiza en directo tras cada pregunta.</p>';}
+  var r=ranked();
+  var pod=[1,0,2].map(function(i){var t=r[i],hgt=[78,58,44][i];return '<div class="pod">'+escudo(tEsc(t),i===0?50:40,tName(t))+'<div class="nm">'+esc(tName(t))+'</div><div class="pt">'+total(t)+' pts</div><div class="blk" style="height:'+hgt+'px">'+(i+1)+'</div></div>'}).join('');
+  return h+'<div class="podium">'+pod+'</div><div class="card" style="padding:10px 10px 6px"><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>#</th><th>Equipo</th><th style="text-align:right">J'+r[0].j.length+'</th><th style="text-align:right">Total</th></tr></thead><tbody>'
+   +r.map(function(t,i){var tr=t.tr>0?'<span class="trend" style="color:#3f9b5b">▲'+t.tr+'</span>':t.tr<0?'<span class="trend" style="color:#c0392b">▼'+(-t.tr)+'</span>':'<span class="trend" style="color:#a59a83">=</span>';
+     return '<tr class="'+(t===mt?'me':'')+'"><td class="pos">'+(i+1)+'</td><td><div class="tm">'+escudo(tEsc(t),26)+'<span>'+esc(tName(t))+'</span> '+tr+'</div></td><td class="n">'+t.j[t.j.length-1]+'</td><td class="n">'+total(t)+'</td></tr>'}).join('')
+   +'</tbody></table></div></div><p class="small" style="margin-top:12px">Premio de la liga: '+LIGA.premio+'.</p>';
 };
 V.historial=function(){
-  var mine=TEAMS[0];
-  return head('Mis jornadas',S.esc.name)
-   +'<div class="hist">'+mine.j.map(function(p,i){return '<div class="dark"><div><div style="font-weight:600;color:var(--oro-claro)">Jornada '+(i+1)+'</div><div class="small">'+(['15 oct','29 oct','12 nov','19 nov'][i]||'26 nov')+' · '+(['3º','1º','6º','2º'][i]||'—')+' de la noche</div></div><div style="text-align:right"><div style="font:700 22px var(--f-disp);color:var(--oro-claro)">'+p+'</div><div class="small">+'+LIGA.pAsist+' pts pasaporte</div></div></div>'}).join('')+'</div>';
+  var mt=myTeam();if(!mt)return V.quiz();
+  return head('Mis jornadas',esc(tName(mt)))+'<div class="hist">'+mt.j.map(function(p,i){return '<div class="dark"><div><div style="font-weight:600;color:var(--oro-claro)">Jornada '+(i+1)+'</div><div class="small">'+(['15 oct','29 oct','12 nov','19 nov'][i]||'26 nov')+'</div></div><div style="text-align:right"><div style="font:700 22px var(--f-disp);color:var(--oro-claro)">'+p+'</div><div class="small">+1 sello</div></div></div>'}).join('')+'</div>';
 };
 
-/* ===== Pantallas de gestión (Felipe) ===== */
+/* ===== Gestión (Felipe) ===== */
 V.gestion=function(){
   var t=today();
   return '<div class="head"><div><div class="eyebrow">La Burbuja · Gestión</div><h1>Quiz</h1></div></div>'
-   +'<div class="stat3"><div class="stat"><b>'+TEAMS.length+'</b><span>equipos</span></div><div class="stat"><b>'+t.ins+'/'+t.aforo+'</b><span>hoy inscritos</span></div><div class="stat"><b>'+TEAMS[0].j.length+'/'+LIGA.jornadas+'</b><span>jornadas</span></div></div>'
+   +'<div class="stat3"><div class="stat"><b>'+tonight().length+'</b><span>equipos hoy</span></div><div class="stat"><b>27</b><span>pasaportes hoy</span></div><div class="stat"><b>19</b><span>aceptan emails</span></div></div>'
+   +'<div class="card" style="margin-top:14px"><div class="tgl" style="padding-top:0"><div><b>El equipo ve las preguntas</b><div class="muted">Solo para consultar, cuando la pregunta ya está cerrada. Responde siempre el capitán.</div></div><button class="sw2'+(S.verPreg?' on':'')+'" data-act="tglPreg" aria-label="El equipo ve las preguntas" aria-pressed="'+S.verPreg+'"></button></div></div>'
+   +'<h2>Avisos de trampa</h2><div class="card">'
+   +'<div class="flagRow"><span><b>Los del Fondo</b> · capitán salió del pasaporte en la P4 y la P5</span><span class="chip c-full">0 pts</span></div>'
+   +'<div class="flagRow"><span><b>Tui Trivia Club</b> · respondió la P3 en 1,2 s</span><span class="chip c-no" style="color:#7d5f17;border-color:#7d5f17">Revisar</span></div></div>'
    +'<div class="stack" style="margin-top:16px">'
-   +'<button class="btn gold" data-go="gResultados">RESULTADOS DE HOY<small>Jornada '+t.j+' · meter puntos por equipo</small></button>'
+   +'<button class="btn gold" data-go="gResultados">RESULTADOS DE HOY<small>Jornada '+t.j+' · si la app del quiz no los envía sola</small></button>'
    +'<button class="btn ivory" data-go="gCalendario">📅 CALENDARIO DE JORNADAS</button>'
-   +'<button class="btn ivory" data-go="gEquipos">🛡️ EQUIPOS E INSCRIPCIONES</button>'
-   +'<button class="btn ivory" data-go="gAjustes">⚙️ AJUSTES DEL QUIZ</button></div>'
-   +'<p class="small" style="margin-top:14px">Si la app del organizador permite enviar resultados, esta pantalla se rellena sola. Si no, Felipe los mete aquí.</p>';
+   +'<button class="btn ivory" data-go="gEquipos">🛡️ EQUIPOS</button>'
+   +'<button class="btn ivory" data-go="gAjustes">⚙️ AJUSTES DEL QUIZ</button></div>';
 };
 V.gCalendario=function(){
   return head('Calendario',LIGA.nombre)
-   +'<div class="dates">'+DATES.map(function(d){return '<div class="date"><div class="cal"><b>'+d.d+'</b><span>'+d.m+'</span></div><div><div class="tt">Jornada '+d.j+' · '+d.h+'</div><div class="st">'+d.ins+'/'+d.aforo+' equipos inscritos</div></div><button class="chip c-no" style="background:none;cursor:pointer" data-toast="Editar o anular la jornada">Editar</button></div>'}).join('')+'</div>'
+   +'<div class="dates">'+DATES.map(function(d){return '<div class="date"><div class="cal"><b>'+d.d+'</b><span>'+d.m+'</span></div><div><div class="tt">Jornada '+d.j+' · '+d.h+'</div><div class="st">'+d.ins+'/'+d.aforo+' equipos</div></div><button class="chip c-no" style="background:none;cursor:pointer" data-toast="Editar o anular la jornada">Editar</button></div>'}).join('')+'</div>'
    +'<h2>Añadir jornada</h2><div class="card"><div class="split"><div class="field"><label for="nd">Fecha</label><input id="nd" type="date" value="2027-01-28"></div><div class="field"><label for="nh">Hora</label><input id="nh" type="time" value="21:30"></div></div>'
-   +'<div class="field"><label for="na">Aforo (equipos)</label><input id="na" type="number" value="12" min="2" max="40"></div>'
-   +'<button class="btn gold" data-act="addDate">AÑADIR JORNADA</button></div>';
+   +'<div class="field"><label for="na">Aforo (equipos)</label><input id="na" type="number" value="12" min="2" max="40"></div><button class="btn gold" data-act="addDate">AÑADIR JORNADA</button></div>';
 };
 V.gEquipos=function(){
-  var t=today();
-  return head('Equipos','Jornada '+t.j+' · hoy')
-   +'<div class="card">'+ranked().map(function(tm,i){return '<div class="row"><div class="tm">'+escudo(teamEsc(tm),28)+'<span>'+teamName(tm)+'</span></div><span class="chip '+(i<t.ins?'c-ok':'c-no')+'">'+(i<t.ins?'Inscrito':'No viene')+'</span></div>'}).join('')+'</div>'
-   +'<p class="small" style="margin-top:10px">Felipe puede cambiar un nombre ofensivo, pasar un miembro a otro equipo o eliminar un equipo.</p>';
+  return head('Equipos',LIGA.nombre)+'<div class="card">'+ranked().map(function(t){return teamRow(t,'<span class="chip '+(t.hoy?'c-ok':'c-no')+'">'+(t.hoy?'Hoy':'No viene')+'</span>','Admin: '+(t===MYT?'Javi':t.adm))}).join('')+'</div>'
+   +'<p class="small" style="margin-top:10px">Felipe puede renombrar un equipo con nombre ofensivo, cambiar el admin o el capitán, mover a alguien de equipo o borrar un equipo.</p>';
 };
 V.gResultados=function(){
-  var t=today(),r=ranked();
-  return head('Resultados','Jornada '+t.j+' · '+t.d+' '+t.m)
-   +'<div class="card">'+r.map(function(tm){return '<div class="row"><div class="tm">'+escudo(teamEsc(tm),28)+'<span>'+teamName(tm)+'</span></div><input class="ptsIn" type="number" inputmode="numeric" min="0" id="pts_'+TEAMS.indexOf(tm)+'" placeholder="pts" aria-label="Puntos de '+teamName(tm)+'"></div>'}).join('')+'</div>'
-   +'<div class="stack" style="margin-top:16px"><button class="btn gold" data-act="saveRes">GUARDAR Y PUBLICAR<small>Actualiza la clasificación y da el sello de asistencia</small></button></div>';
+  var tn=tonight();
+  return head('Resultados','Jornada '+today().j)+'<div class="card">'+tn.map(function(t,i){return '<div class="row"><div class="tm">'+escudo(tEsc(t),28)+'<span>'+esc(tName(t))+'</span></div><input class="ptsIn" type="number" inputmode="numeric" min="0" id="pts_'+i+'" value="'+t.pts+'" aria-label="Puntos de '+esc(tName(t))+'"></div>'}).join('')+'</div>'
+   +'<div class="stack" style="margin-top:16px"><button class="btn gold" data-act="saveRes">GUARDAR Y PUBLICAR<small>Suma a la liga y da el sello a cada miembro presente</small></button></div>';
 };
 V.gAjustes=function(){
   return head('Ajustes del quiz')
    +'<div class="card"><div class="field"><label for="a1">Nombre de la liga</label><input id="a1" value="'+LIGA.nombre+'"></div>'
    +'<div class="split"><div class="field"><label for="a2">Jornadas</label><input id="a2" type="number" value="'+LIGA.jornadas+'"></div><div class="field"><label for="a3">Miembros máx.</label><input id="a3" type="number" value="6"></div></div>'
-   +'<div class="field"><label for="a4">Premio por asistir</label><select id="a4"><option>Un sello en el cupón</option><option selected>300 puntos</option><option>Nada</option></select></div>'
+   +'<div class="split"><div class="field"><label for="a7">Segundos por pregunta</label><input id="a7" type="number" value="'+LIGA.seg+'"></div><div class="field"><label for="a8">Bonus por pasaporte</label><input id="a8" type="number" value="'+LIGA.bonus+'"></div></div>'
+   +'<div class="field"><label for="a9">Si el capitán sale del pasaporte en una pregunta</label><select id="a9"><option selected>Esa respuesta no puntúa</option><option>Solo avisar a Felipe</option></select></div>'
    +'<div class="field"><label for="a5">Premio de la liga</label><input id="a5" value="'+LIGA.premio+'"></div>'
    +'<div class="field"><label for="a6">Enlace de la app del quiz</label><input id="a6" placeholder="Pendiente del organizador"></div>'
    +'<button class="btn gold" data-toast="Guardado (demo)">GUARDAR</button></div>';
 };
 
 /* ===== Navegación ===== */
+var tick=null;
 function render(){
   var sc=S.screen;
   if(S.view==='own'&&!/^g/.test(sc))sc=S.screen='gestion';
   if(S.view==='cli'&&/^g/.test(sc))sc=S.screen='portada';
   $('app').innerHTML=(V[sc]||V.portada)()+'<div class="foot">Maqueta del QUIZ para el Pasaporte La Burbuja · datos de ejemplo</div>';
+  clearInterval(tick);
+  if(sc==='directo'&&isCap()&&!S.q.ans&&S.q.left>0){tick=setInterval(function(){S.q.left--;var el=$('timer');if(S.q.left<=0){clearInterval(tick);render();return}if(el){el.textContent=S.q.left;el.classList.toggle('low',S.q.left<=5)}},1000)}
+  var b=$('buscar');if(b)b.addEventListener('input',function(){var v=b.value.toLowerCase();[].forEach.call(document.querySelectorAll('#teamList [data-name]'),function(r){r.hidden=v&&r.dataset.name.indexOf(v)<0})});
 }
-function go(s){if(s==='__back'){S.screen=S.stack.pop()||'portada'}else{S.stack.push(S.screen);S.screen=s}render();window.scrollTo(0,0)}
-function setSw(id,cb){$(id).addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;[].forEach.call(this.children,function(x){x.classList.toggle('on',x===b)});cb(b.dataset.v);S.stack=[];render();window.scrollTo(0,0)})}
-setSw('swView',function(v){S.view=v;S.screen=v==='own'?'gestion':'portada'});
-setSw('swDay',function(v){S.day=v==='1'});
-setSw('swTeam',function(v){S.team=v==='1';S.isCap=true;S.screen=S.view==='own'?'gestion':'quiz';S.stack=S.view==='own'?[]:['portada']});
+function go(s){if(s==='__back'){S.screen=S.stack.pop()||'portada'}else{S.stack.push(S.screen);S.screen=s}S.tab=null;render();window.scrollTo(0,0)}
+function jump(stack,screen){S.stack=stack;S.screen=screen;render();window.scrollTo(0,0)}
+function setOn(id,v){[].forEach.call($(id).children,function(x){x.classList.toggle('on',x.dataset.v===v)})}
+function setUser(u){S.user=u;S.myIdx=-1;S.newTeam=false;S.pend=-1;S.esc={shape:0,c1:'#c7a84d',c2:'#1d1606',ic:'★',name:'Los Sabelotodo'};resetTeamState();setOn('swUser',u)}
+function sw(id,cb){$(id).addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;setOn(id,b.dataset.v);cb(b.dataset.v);render();window.scrollTo(0,0)})}
+sw('swView',function(v){S.view=v;S.stack=[];S.screen=v==='own'?'gestion':'portada'});
+sw('swDay',function(v){S.day=v==='1';S.stack=[];S.screen='portada'});
+sw('swUser',function(v){setUser(v);S.stack=[];S.screen=v==='nuevo'?'qr':'portada'});
+/* Antitrampas: si el capitán sale del pasaporte con una pregunta abierta */
+document.addEventListener('visibilitychange',function(){
+  if(document.hidden&&S.screen==='directo'&&isCap()&&!S.q.ans&&S.q.left>0){S.q.out++;S.q.lost=true}
+  if(!document.hidden&&S.screen==='directo'&&S.q.lost)render();
+});
 document.addEventListener('click',function(e){
+  var tb=e.target.closest('[data-tab]');if(tb){S.tab=tb.dataset.tab;render();return}
   var el=e.target.closest('[data-go],[data-toast],[data-act],[data-esc],[data-ins]');if(!el)return;
   if(el.dataset.go)return go(el.dataset.go);
   if(el.dataset.toast)return toast(el.dataset.toast);
-  if(el.dataset.ins){S.joined[el.dataset.ins]=true;render();return toast('Equipo inscrito en la jornada')}
-  if(el.dataset.esc){var k=el.dataset.esc,v=el.dataset.val;S.esc[k]=k==='shape'?+v:v;var nm=$('tName');if(nm)S.esc.name=nm.value||S.esc.name;render();return}
-  var a=el.dataset.act;
-  if(a==='rand'){S.esc.shape=Math.floor(Math.random()*4);S.esc.ic=ICONS[Math.floor(Math.random()*ICONS.length)];S.esc.c1=COLS[Math.floor(Math.random()*COLS.length)];do{S.esc.c2=COLS[Math.floor(Math.random()*COLS.length)]}while(S.esc.c2===S.esc.c1);var n=$('tName');if(n)S.esc.name=n.value||S.esc.name;render()}
-  if(a==='saveEsc'){var n2=$('tName');S.esc.name=(n2&&n2.value.trim())||S.esc.name;var was=S.team;S.team=true;if(!was)S.isCap=true;$('swTeam').children[0].classList.add('on');$('swTeam').children[1].classList.remove('on');S.stack=['portada','quiz'];S.screen=(!was&&S.day)?'directo':'equipo';render();window.scrollTo(0,0);toast(was?'Escudo guardado':'Equipo creado. Comparte el código.')}
-  if(a==='join'){var c=$('joinCode').value.trim();if(!c)return toast('Escribe el código del equipo');S.team=true;$('swTeam').children[0].classList.add('on');$('swTeam').children[1].classList.remove('on');S.screen='equipo';render();toast('Te has unido a '+S.esc.name)}
-  if(a==='pick'){var i=+el.dataset.i,ch=TEAMS[i],old=TEAMS.filter(function(x){return x.me})[0];
-    if(ch!==old){old.me=false;old.esc={shape:S.esc.shape,c1:S.esc.c1,c2:S.esc.c2,ic:S.esc.ic};old.n=S.esc.name;ch.me=true;S.esc={shape:ch.esc.shape,c1:ch.esc.c1,c2:ch.esc.c2,ic:ch.esc.ic,name:ch.n}}
-    S.team=true;S.isCap=false;S.inscrito=true;$('swTeam').children[0].classList.add('on');$('swTeam').children[1].classList.remove('on');S.stack=['portada','quiz'];S.screen='directo';render();window.scrollTo(0,0);return toast('Dentro de '+S.esc.name+'. Inscrito en la jornada.')}
-  if(a==='here')toast('Asistencia marcada. Sello al terminar la jornada.');
-  if(a==='addDate'){var d=$('nd').value,h=$('nh').value,ar=+$('na').value||12;if(!d)return toast('Elige una fecha');var p=d.split('-'),ms=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-    DATES.push({d:+p[2],m:ms[+p[1]-1],w:'Jueves',h:h,j:DATES[DATES.length-1].j+1,aforo:ar,ins:0});render();toast('Jornada añadida')}
-  if(a==='saveRes'){var any=false;TEAMS.forEach(function(t,i){var v=$('pts_'+i).value;if(v!==''){t.j.push(+v);any=true}else t.j.push(0)});
-    if(!any){TEAMS.forEach(function(t){t.j.pop()});return toast('Mete los puntos de al menos un equipo')}
-    S.view='cli';$('swView').children[0].classList.add('on');$('swView').children[1].classList.remove('on');S.stack=['portada','quiz'];S.screen='liga';render();window.scrollTo(0,0);toast('Publicado. Así lo ven los clientes.')}
+  if(el.dataset.ins){S.joined[el.dataset.ins]=true;render();return toast('Felipe ya sabe que vais')}
+  if(el.dataset.esc){var k=el.dataset.esc,v=el.dataset.val;S.esc[k]=k==='shape'?+v:v;var nm=$('tName');if(nm)S.draftName=nm.value;if(nm&&myTeam()===MYT)S.esc.name=nm.value||S.esc.name;render();return}
+  var a=el.dataset.act,n=el.dataset.n;
+  if(a==='sendCode'){var m=$('mail').value.trim();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m))return toast('Escribe un email válido');S.email=m;S.mkt=$('c2').checked;return go('codigo')}
+  if(a==='verify'){S.user='libre';setOn('swUser','libre');jump([],'portada');return toast('Pasaporte creado'+(S.mkt?' · recibirás las novedades':''))}
+  if(a==='enter')return go('directo');
+  if(a==='ask'){var i=+el.dataset.i;S.pend=i;jump(['portada','quiz'],'pendiente');return toast('Solicitud enviada a '+OTHERS[i].adm)}
+  if(a==='cancelReq'){S.pend=-1;return jump(['portada'],'quiz')}
+  if(a==='okDemo'){var t=OTHERS[S.pend];S.user='equipo';setOn('swUser','equipo');S.myIdx=S.pend;S.newTeam=false;S.pend=-1;resetTeamState();
+    if(t.hoy){jump(['portada','quiz'],'directo');return toast(t.adm+' te ha aceptado. Ya juegas con '+t.n)}
+    jump(['portada','quiz'],'equipo');return toast(t.adm+' te ha aceptado en '+t.n)}
+  if(a==='vote'){S.myVote=n;var best=S.cap;members().forEach(function(m){if(votesOf(m)>votesOf(best))best=m});var ch=best!==S.cap;S.cap=best;render();return toast(ch?best+' es ahora el capitán':'Voto para '+n)}
+  if(a==='acc'){S.reqs=S.reqs.filter(function(x){return x!==n});S.extra=(S.extra||[]).concat([n]);render();return toast(n+' ya está en el equipo')}
+  if(a==='rej'){S.reqs=S.reqs.filter(function(x){return x!==n});render();return toast('Solicitud rechazada')}
+  if(a==='leave'){setUser('libre');jump(['portada'],'quiz');return toast('Has salido del equipo')}
+  if(a==='rand'){var nm2=$('tName');if(nm2)S.draftName=nm2.value;S.esc.shape=Math.floor(Math.random()*4);S.esc.ic=ICONS[Math.floor(Math.random()*ICONS.length)];S.esc.c1=COLS[Math.floor(Math.random()*COLS.length)];do{S.esc.c2=COLS[Math.floor(Math.random()*COLS.length)]}while(S.esc.c2===S.esc.c1);render();return}
+  if(a==='saveEsc'){var nv=($('tName').value||'').trim();if(!nv)return toast('Pon el nombre del equipo');
+    var taken=OTHERS.filter(function(t){return t.n.toLowerCase()===nv.toLowerCase()})[0];
+    if(taken&&myTeam()!==MYT){S.stack=['portada','quiz'];S.screen='elegir';render();return toast('«'+taken.n+'» ya existe'+(taken.hoy?' y está jugando hoy':'')+'. Pide entrar.')}
+    S.esc.name=nv;if(myTeam()===MYT){go('__back');return toast('Escudo guardado')}
+    S.user='equipo';setOn('swUser','equipo');S.myIdx=-1;S.newTeam=true;S.pend=-1;MYT.j=[0,0,0,0];MYT.pts=0;resetTeamState();
+    jump(['portada','quiz'],S.day?'directo':'equipo');return toast('Equipo creado. Eres el administrador y el capitán.')}
+  if(a==='answer'){S.q.ans=el.dataset.l;clearInterval(tick);render();return toast('Respuesta '+S.q.ans+' enviada')}
+  if(a==='nextQ'){S.q={n:Math.min(S.q.n+1,10),left:LIGA.seg,ans:null,out:0,lost:false};render();return}
+  if(a==='tglPreg'){S.verPreg=!S.verPreg;render();return toast(S.verPreg?'Los equipos ya ven las preguntas cerradas':'Preguntas ocultas para el equipo')}
+  if(a==='addDate'){var d=$('nd').value,h=$('nh').value,ar=+$('na').value||12;if(!d)return toast('Elige una fecha');var p=d.split('-'),mm=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    DATES.push({d:+p[2],m:mm[+p[1]-1],w:'Jueves',h:h,j:DATES[DATES.length-1].j+1,aforo:ar,ins:0});render();return toast('Jornada añadida')}
+  if(a==='saveRes'){tonight().forEach(function(t,i){var v=$('pts_'+i);if(v)t.pts=+v.value||0});S.view='cli';setOn('swView','cli');S.tab='noche';S.stack=['portada','quiz'];S.screen='liga';render();window.scrollTo(0,0);return toast('Publicado. Así lo ven los clientes.')}
 });
 document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.matches('[role=button]'))e.target.click()});
-render();
+resetTeamState();render();
 </script>
