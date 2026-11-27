@@ -299,7 +299,10 @@ var DATES=[
   {d:17,m:'dic',w:'Jueves',h:'21:30',j:7,aforo:12,ins:12},
   {d:14,m:'ene',w:'Jueves',h:'21:30',j:8,aforo:12,ins:1}
 ];
-var LIGA={nombre:'Liga de invierno',jornadas:10,premio:'Cena para todo el equipo + camisetas',pAsist:300,seg:20,bonus:1};
+var LIGA={nombre:'Liga de invierno',jornadas:10,premio:'Cena para todo el equipo + camisetas',pAsist:300,seg:20,tope:4};
+function bonusPts(n){return Math.max(0,Math.min(n-1,LIGA.tope))}
+function bonusTable(hl){var r='';for(var n=1;n<=LIGA.tope+1;n++)r+='<tr'+(n===Math.min(hl,LIGA.tope+1)?' class="me"':'')+'><td>'+(n===LIGA.tope+1?n+' o más':n)+'</td><td class="n">+'+bonusPts(n)+'</td></tr>';return '<table class="tbl" style="margin-top:6px"><thead><tr><th>Miembros con «Estoy aquí»</th><th style="text-align:right">Bonus</th></tr></thead><tbody>'+r+'</tbody></table>'}
+function present(){var t=myTeam();if(!t)return 0;if(t===MYT)return S.newTeam?1+(S.extra||[]).length:4+(S.extra||[]).length;return t.mem.length+1}
 var PREGS=['¿En qué año abrió La Burbuja sus puertas en Tui?','¿Qué banda gallega tocó aquí el 14 de noviembre?','Suena un fragmento: ¿de qué disco es?','¿Cuántos vinilos hay colgados en la pared de la barra?','Foto en pantalla: ¿qué puente es?','¿Cuántos grados tiene el vermú de la casa?'];
 
 /* ===== Escudo ===== */
@@ -403,7 +406,7 @@ V.quiz=function(){
    +'<button class="btn ivory" data-go="'+(mt?'equipo':S.pend>=0?'pendiente':'elegir')+'">🛡️ MI EQUIPO<small>'+(mt?esc(tName(mt))+' · '+members().length+' miembros':'Aún sin equipo')+'</small></button>'
    +(mt?'<button class="btn ghost" data-go="historial">MIS JORNADAS</button>':'')+'</div>'
    +'<h2>Calendario</h2><div class="dates">'+DATES.slice(S.day?0:1).map(dateRow).join('')+'</div>'
-   +'<h2>Cómo funciona</h2><div class="dark small" style="color:var(--oro-claro)">Quien crea el equipo es su administrador: acepta a los que piden entrar. El equipo vota quién es el capitán, y solo el capitán responde. Cada miembro con pasaporte que está en la jornada suma +'+LIGA.bonus+' punto al equipo y un sello en su cupón.</div>';
+   +'<h2>Cómo funciona</h2><div class="dark small" style="color:var(--oro-claro)">Quien crea el equipo es su administrador: acepta a los que piden entrar. El equipo vota quién es el capitán, y solo el capitán responde. Bonus de asistencia: el equipo suma 1 punto por cada miembro que marca «Estoy aquí» con su pasaporte, a partir del segundo y con un tope de '+LIGA.tope+'. Uno solo: 0. Dos: +1. Cinco o más: +'+LIGA.tope+'.</div>';
 };
 function dateRow(d){
   var mt=myTeam(),key='j'+d.j,ins=d.today?!!mt:!!S.joined[key],full=d.ins>=d.aforo&&!ins;
@@ -472,7 +475,8 @@ V.directo=function(){
   var verP=!cap&&S.verPreg?'<h2>Preguntas ya cerradas</h2>'+PREGS.slice(0,q.n-1).reverse().slice(0,3).map(function(p,i){return '<div class="qText"><b>Pregunta '+(q.n-1-i)+'</b>'+esc(p)+'</div>'}).join(''):'';
   var rk='<h2>Esta noche</h2><div class="card" style="padding:10px"><table class="tbl"><tbody>'+tn.map(function(x,i){return '<tr class="'+(x===mt?'me':'')+'"><td class="pos">'+(i+1)+'</td><td><div class="tm">'+escudo(tEsc(x),24)+'<span>'+esc(tName(x))+'</span></div></td><td class="n">'+x.pts+'</td></tr>'}).join('')+'</tbody></table></div>';
   var ms=members();
-  var bonus='<div class="info" style="margin-top:14px">'+ms.length+' miembros con pasaporte en la jornada: +'+(ms.length*LIGA.bonus)+' puntos para el equipo. Trae a tu gente y que se hagan el pasaporte.</div>';
+  var pr=present(),bp=bonusPts(pr),nx=pr<=LIGA.tope?'Con uno más que marque «Estoy aquí», +'+bonusPts(pr+1)+'.':'Ya tenéis el máximo.';
+  var bonus='<h2>Bonus de asistencia</h2><div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div><b>'+pr+' de '+ms.length+' aquí</b><div class="muted">'+nx+'</div></div><div style="font:700 34px var(--f-disp)">+'+bp+'</div></div>'+bonusTable(pr)+'<p class="muted" style="margin:8px 0 0">Para marcar «Estoy aquí» hace falta pasaporte.</p></div>'+(isCap()?'':'<div style="margin-top:12px"><button class="btn ivory" data-act="here">ESTOY AQUÍ</button></div>');
   return hdr+top+verP+rk+bonus;
 };
 /* --- Clasificación: esta noche y liga --- */
@@ -490,7 +494,7 @@ V.liga=function(){
 };
 V.historial=function(){
   var mt=myTeam();if(!mt)return V.quiz();
-  return head('Mis jornadas',esc(tName(mt)))+'<div class="hist">'+mt.j.map(function(p,i){return '<div class="dark"><div><div style="font-weight:600;color:var(--oro-claro)">Jornada '+(i+1)+'</div><div class="small">'+(['15 oct','29 oct','12 nov','19 nov'][i]||'26 nov')+'</div></div><div style="text-align:right"><div style="font:700 22px var(--f-disp);color:var(--oro-claro)">'+p+'</div><div class="small">+1 sello</div></div></div>'}).join('')+'</div>';
+  return head('Mis jornadas',esc(tName(mt)))+'<div class="hist">'+mt.j.map(function(p,i){return '<div class="dark"><div><div style="font-weight:600;color:var(--oro-claro)">Jornada '+(i+1)+'</div><div class="small">'+(['15 oct','29 oct','12 nov','19 nov'][i]||'26 nov')+'</div></div><div style="text-align:right"><div style="font:700 22px var(--f-disp);color:var(--oro-claro)">'+p+'</div><div class="small">'+(i===2?'incluye +2 de asistencia':'incluye +3 de asistencia')+'</div></div></div>'}).join('')+'</div>';
 };
 
 /* ===== Gestión (Felipe) ===== */
@@ -527,7 +531,7 @@ V.gAjustes=function(){
   return head('Ajustes del quiz')
    +'<div class="card"><div class="field"><label for="a1">Nombre de la liga</label><input id="a1" value="'+LIGA.nombre+'"></div>'
    +'<div class="split"><div class="field"><label for="a2">Jornadas</label><input id="a2" type="number" value="'+LIGA.jornadas+'"></div><div class="field"><label for="a3">Miembros máx.</label><input id="a3" type="number" value="6"></div></div>'
-   +'<div class="split"><div class="field"><label for="a7">Segundos por pregunta</label><input id="a7" type="number" value="'+LIGA.seg+'"></div><div class="field"><label for="a8">Bonus por pasaporte</label><input id="a8" type="number" value="'+LIGA.bonus+'"></div></div>'
+   +'<div class="split"><div class="field"><label for="a7">Segundos por pregunta</label><input id="a7" type="number" value="'+LIGA.seg+'"></div><div class="field"><label for="a8">Tope del bonus de asistencia</label><input id="a8" type="number" value="'+LIGA.tope+'"></div></div>'
    +'<div class="field"><label for="a9">Si el capitán sale del pasaporte en una pregunta</label><select id="a9"><option selected>Esa respuesta no puntúa</option><option>Solo avisar a Felipe</option></select></div>'
    +'<div class="field"><label for="a5">Premio de la liga</label><input id="a5" value="'+LIGA.premio+'"></div>'
    +'<div class="field"><label for="a6">Enlace de la app del quiz</label><input id="a6" placeholder="Pendiente del organizador"></div>'
@@ -585,6 +589,7 @@ document.addEventListener('click',function(e){
     S.esc.name=nv;if(myTeam()===MYT){go('__back');return toast('Escudo guardado')}
     S.user='equipo';setOn('swUser','equipo');S.myIdx=-1;S.newTeam=true;S.pend=-1;MYT.j=[0,0,0,0];MYT.pts=0;resetTeamState();
     jump(['portada','quiz'],S.day?'directo':'equipo');return toast('Equipo creado. Eres el administrador y el capitán.')}
+  if(a==='here')return toast('Ya estás marcado: cuentas para el bonus');
   if(a==='answer'){S.q.ans=el.dataset.l;clearInterval(tick);render();return toast('Respuesta '+S.q.ans+' enviada')}
   if(a==='nextQ'){S.q={n:Math.min(S.q.n+1,10),left:LIGA.seg,ans:null,out:0,lost:false};render();return}
   if(a==='tglPreg'){S.verPreg=!S.verPreg;render();return toast(S.verPreg?'Los equipos ya ven las preguntas cerradas':'Preguntas ocultas para el equipo')}
